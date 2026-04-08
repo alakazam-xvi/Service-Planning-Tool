@@ -193,6 +193,7 @@
             <thead style="position: sticky; top: 0; z-index: 10;">
               <tr>
                 <th>Departure Time</th>
+                <th>Interval</th>
                 <th>Unit ID</th>
                 <th>Operating Period</th>
               </tr>
@@ -242,10 +243,9 @@
   <section id="section-changelog">
     <h1>Changelog</h1>
     <ul>
-      <li><strong>2026-04-08:</strong> Updated branding to Blue (#335fb8) and Red (#ce1127). Red theme integrated into simulation colors.</li>
+      <li><strong>2026-04-08:</strong> Updated branding to Blue (#335fb8) and Red (#ce1127). Added "Interval" column to Dispatching Schedule. Fixed overlapping trips by forcing departure times to respect prior trip ends.</li>
       <li><strong>2026-04-08 (Fixed Layover):</strong> Fixed zero-layover bug. Added explicit Layover / Recovery Time input. Corrected headway formula to <code>(RT + Layover) / N</code>. Exposed Cycle Time columns.</li>
       <li><strong>2026-04-08 (UI Update):</strong> Removed section numbers. Added toast notification. Bound trip coloring to periods. Created 3-tab output system.</li>
-      <li><strong>2026-04-08 (Earlier):</strong> Segmented architecture. Multi-period dispatch simulation.</li>
       <li><strong>v1.1.0:</strong> Added inputs for units, RT, and Speed. Added end of operation output.</li>
       <li><strong>v1.0.0:</strong> Initial deterministic timeline visualization.</li>
     </ul>
@@ -262,7 +262,6 @@ let periods = [
   { id: 3, durationHr: 4, rtHr: 2.5 }   // Evening Peak
 ];
 
-// Updated Visualization Colors with Branding
 const COLORS = ['#335fb8', '#ce1127', '#b45309', '#6d28d9', '#0f766e', '#1d4ed8', '#be123c'];
 
 // --- Utilities ---
@@ -342,20 +341,12 @@ function runSimulation() {
     const endStart = currentStart + durMin;
     
     pBoundaries.push({
-      idx: i,
-      start: currentStart,
-      end: endStart,
-      rt: rtMin,
-      interval: interval,
-      color: COLORS[i % COLORS.length]
+      idx: i, start: currentStart, end: endStart, rt: rtMin, interval: interval, color: COLORS[i % COLORS.length]
     });
 
     tBody.innerHTML += `
       <tr>
-        <td>
-          <span class="period-badge" style="background:${COLORS[i % COLORS.length]};"></span>
-          Period ${i + 1}
-        </td>
+        <td><span class="period-badge" style="background:${COLORS[i % COLORS.length]};"></span>Period ${i + 1}</td>
         <td><strong>${formatTimeAMPM(currentStart)} - ${formatTimeAMPM(endStart)}</strong></td>
         <td>${p.durationHr} hrs</td>
         <td>${p.rtHr} hrs</td>
@@ -370,46 +361,51 @@ function runSimulation() {
   });
 
   const endOperationMin = startMin + totalDurationMin;
-  const initialDispatchInterval = pBoundaries[0].interval;
-
   let allTrips = [];
-  let tripsPerUnitTracker = Array(units).fill(0);
-  let lastTripEnd = 0;
+  let unitLastFinish = Array(units).fill(startMin - layoverMin);
+
+  // Generate staggered initial starts for units
+  let staggeredStarts = [];
+  for (let u = 0; u < units; u++) {
+    staggeredStarts.push(startMin + (u * pBoundaries[0].interval));
+  }
 
   for(let u = 0; u < units; u++) {
-    let t = startMin + (u * initialDispatchInterval);
+    let t = staggeredStarts[u];
     
     while (t < endOperationMin) {
+      // Find the period that corresponds to the CURRENT departure time
       let activePeriod = pBoundaries.find(pb => t >= pb.start && t < pb.end);
       if (!activePeriod) break; 
 
+      // Ensure departure doesn't overlap with the unit's previous trip
+      t = Math.max(t, unitLastFinish[u] + layoverMin);
+      
       let tripEnd = t + activePeriod.rt;
-
-      // Guard against overlap in high-layover scenarios
-      const lastUnitTrip = allTrips.filter(tr => tr.vId === u).slice(-1)[0];
-      if (lastUnitTrip && t < lastUnitTrip.end) {
-        t = lastUnitTrip.end + layoverMin;
-        continue;
-      }
 
       if (tripEnd <= endOperationMin) {
         allTrips.push({ vId: u, start: t, end: tripEnd, periodIdx: activePeriod.idx });
-        tripsPerUnitTracker[u]++;
-        if (tripEnd > lastTripEnd) lastTripEnd = tripEnd;
+        unitLastFinish[u] = tripEnd;
+        // Next trip is scheduled to start at current trip end + layover
+        t = tripEnd + layoverMin;
+      } else {
+        break;
       }
-      
-      t = tripEnd + layoverMin; 
     }
   }
 
   // Generate Tab Outputs
   renderMatrix(units, startMin, totalDurationMin, allTrips, pBoundaries);
-  renderVehicleSchedules(units, allTrips, Math.max(...tripsPerUnitTracker));
+  renderVehicleSchedules(units, allTrips);
   renderDispatchLedger(allTrips, pBoundaries);
 
-  // Set Metrics
-  const minT = Math.min(...tripsPerUnitTracker);
-  const maxT = Math.max(...tripsPerUnitTracker);
+  // Metrics calculation
+  const counts = Array(units).fill(0);
+  allTrips.forEach(tr => counts[tr.vId]++);
+  const minT = Math.min(...counts);
+  const maxT = Math.max(...counts);
+  const lastTripEnd = allTrips.length > 0 ? Math.max(...allTrips.map(tr => tr.end)) : 0;
+
   document.getElementById('m-total').textContent = allTrips.length;
   document.getElementById('m-tpv').textContent = minT === maxT ? minT : `${minT} - ${maxT}`;
   document.getElementById('m-end').textContent = lastTripEnd > 0 ? formatTimeAMPM(lastTripEnd) : '--:--';
@@ -420,106 +416,58 @@ function runSimulation() {
 function renderMatrix(units, startMin, totalDur, trips, pBoundaries) {
   const TLPX = Math.max(1000, totalDur * 1.5); 
   const PPM = TLPX / totalDur;
-
   let html = `<div class="hdr-row"><div class="lbl-col">Timeline</div><div class="tl-hdr">`;
-  
-  for(let m = 0; m <= totalDur; m += 60) {
-    html += `<span class="tlbl" style="left:${m * PPM}px">${formatTimeAMPM(startMin + m)}</span>`;
-  }
-  
-  pBoundaries.forEach((pb, i) => {
-    const leftPx = (pb.start - startMin) * PPM;
-    const widthPx = (pb.end - pb.start) * PPM;
-    html += `<div class="period-zone" style="left:${leftPx}px; width:${widthPx}px; border-left: 2px solid ${pb.color};">
-      <div style="position:absolute; top:2px; left:4px; font-size:10px; font-weight:700; color:${pb.color};">P${i+1}</div>
-    </div>`;
-  });
-
+  for(let m = 0; m <= totalDur; m += 60) html += `<span class="tlbl" style="left:${m * PPM}px">${formatTimeAMPM(startMin + m)}</span>`;
   html += '</div></div>';
 
   for(let i = 0; i < units; i++) {
     const unitTrips = trips.filter(t => t.vId === i);
-    html += `<div class="vrow">
-      <div class="rlbl">Unit ${String(i + 1).padStart(2, '0')}<span class="sub">${unitTrips.length} trips</span></div>
-      <div class="tla">`;
-    
-    pBoundaries.forEach(pb => {
-      const leftPx = (pb.start - startMin) * PPM;
-      const widthPx = (pb.end - pb.start) * PPM;
-      html += `<div class="period-zone" style="left:${leftPx}px; width:${widthPx}px;"></div>`;
-    });
-
+    html += `<div class="vrow"><div class="rlbl">Unit ${String(i + 1).padStart(2, '0')}<span class="sub">${unitTrips.length} trips</span></div><div class="tla">`;
     unitTrips.forEach(tr => {
       const startPx = (tr.start - startMin) * PPM;
       const widthPx = (tr.end - tr.start) * PPM;
-      const pColor = COLORS[tr.periodIdx % COLORS.length];
-      
-      html += `<div class="bar" style="left:${startPx}px; width:${widthPx}px; background:${pColor}; border-color:rgba(0,0,0,0.2);">
-        ${formatTimeAMPM(tr.start)} - ${formatTimeAMPM(tr.end)}
-      </div>`;
+      html += `<div class="bar" style="left:${startPx}px; width:${widthPx}px; background:${COLORS[tr.periodIdx % COLORS.length]}; border-color:rgba(0,0,0,0.2);">${formatTimeAMPM(tr.start)} - ${formatTimeAMPM(tr.end)}</div>`;
     });
-
     html += `</div></div>`;
   }
-
   document.getElementById('matrix').innerHTML = `<div style="min-width:${TLPX + 120}px;">${html}</div>`;
 }
 
-function renderVehicleSchedules(units, trips, maxTrips) {
+function renderVehicleSchedules(units, trips) {
+  const counts = Array(units).fill(0);
+  trips.forEach(tr => counts[tr.vId]++);
+  const maxTrips = Math.max(...counts, 1);
   let html = '<thead><tr><th rowspan="2" style="background:var(--bg-sec); position:sticky; left:0; z-index:2;">UNIT</th>';
-  for (let i = 1; i <= maxTrips; i++) {
-    html += `<th colspan="2" style="text-align:center;">TRIP ${i}</th>`;
-  }
+  for (let i = 1; i <= maxTrips; i++) html += `<th colspan="2" style="text-align:center;">TRIP ${i}</th>`;
   html += '</tr><tr>';
-  for (let i = 1; i <= maxTrips; i++) {
-    html += '<th>TIME START</th><th>TIME END</th>';
-  }
+  for (let i = 1; i <= maxTrips; i++) html += '<th>START</th><th>END</th>';
   html += '</tr></thead><tbody>';
 
   for(let u = 0; u < units; u++) {
-    const unitTrips = trips.filter(t => t.vId === u);
+    const unitTrips = trips.filter(t => t.vId === u).sort((a,b)=>a.start-b.start);
     html += `<tr><td style="font-weight:600; background:#fff; position:sticky; left:0; z-index:1; border-right:2px solid var(--border-light);">Unit ${String(u + 1).padStart(2, '0')}</td>`;
-    
     for (let i = 0; i < maxTrips; i++) {
-      if (i < unitTrips.length) {
-        const pColor = COLORS[unitTrips[i].periodIdx % COLORS.length];
-        html += `
-          <td style="color:${pColor}; font-weight:500;">${formatTimeAMPM(unitTrips[i].start)}</td>
-          <td>${formatTimeAMPM(unitTrips[i].end)}</td>
-        `;
-      } else {
-        html += `<td style="color:var(--border);">--:--</td><td style="color:var(--border);">--:--</td>`;
-      }
+      if (i < unitTrips.length) html += `<td style="color:${COLORS[unitTrips[i].periodIdx % COLORS.length]}; font-weight:500;">${formatTimeAMPM(unitTrips[i].start)}</td><td>${formatTimeAMPM(unitTrips[i].end)}</td>`;
+      else html += `<td style="color:var(--border);">--:--</td><td style="color:var(--border);">--:--</td>`;
     }
     html += '</tr>';
   }
-  
-  html += '</tbody>';
-  document.getElementById('unit-schedules-table').innerHTML = html;
+  document.getElementById('unit-schedules-table').innerHTML = html + '</tbody>';
 }
 
 function renderDispatchLedger(trips, pBoundaries) {
   const sortedTrips = [...trips].sort((a, b) => a.start - b.start);
   let html = '';
-
+  let prevStart = null;
   sortedTrips.forEach(tr => {
-    const period = pBoundaries.find(p => p.idx === tr.periodIdx);
-    html += `
-      <tr>
-        <td style="font-weight:700; color:#111827;">${formatTimeAMPM(tr.start)}</td>
-        <td style="font-weight:600;">Unit ${String(tr.vId + 1).padStart(2, '0')}</td>
-        <td>
-          <span class="period-badge" style="background:${period.color};"></span>
-          Period ${tr.periodIdx + 1}
-        </td>
-      </tr>
-    `;
+    const p = pBoundaries.find(pb => pb.idx === tr.periodIdx);
+    const interval = prevStart === null ? '--' : (tr.start - prevStart) + ' min';
+    prevStart = tr.start;
+    html += `<tr><td><strong>${formatTimeAMPM(tr.start)}</strong></td><td>${interval}</td><td>Unit ${String(tr.vId+1).padStart(2,'0')}</td><td><span class="period-badge" style="background:${p.color};"></span>Period ${tr.periodIdx+1}</td></tr>`;
   });
-
   document.getElementById('dispatch-ledger-body').innerHTML = html;
 }
 
-// Init
 renderPeriods();
 </script>
 </body>
