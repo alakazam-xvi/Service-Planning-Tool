@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bus Service Simulator & Planner</title>
+
+<style>
+  :root {
+    --primary: #0F6E56;
+    --primary-hover: #0c5945;
+    --bg-main: #f9fafb;
+    --bg-panel: #ffffff;
+    --bg-sec: #f3f4f6;
+    --border: #d1d5db;
+    --border-light: #e5e7eb;
+    --text-main: #111827;
+    --text-sec: #6b7280;
+    --radius: 8px;
+  }
+  
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { padding: 30px; background: var(--bg-main); color: var(--text-main); line-height: 1.5; }
+  
+  /* Layout */
+  .container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+  section { background: var(--bg-panel); padding: 30px; border-radius: var(--radius); border: 1px solid var(--border-light); box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 20px; color: var(--primary); border-bottom: 2px solid var(--bg-sec); padding-bottom: 10px; }
+  h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; margin-top: 24px; color: #374151; }
+  p, li { font-size: 14px; color: #4b5563; margin-bottom: 8px; }
+  ul { margin-left: 20px; margin-bottom: 16px; }
+
+  /* Form Elements */
+  .cfg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 24px; }
+  .fld { display: flex; flex-direction: column; gap: 6px; }
+  .fld label { font-size: 12px; font-weight: 600; color: #374151; text-transform: uppercase; letter-spacing: 0.5px; }
+  .fld input, .fld select { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #fff; }
+  .fld input:focus, .fld select:focus { outline: none; border-color: var(--primary); }
+  
+  /* Period Builder */
+  .period-builder { background: var(--bg-sec); padding: 16px; border-radius: 6px; margin-bottom: 24px; border: 1px solid var(--border-light); }
+  .period-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .period-hdr span { font-weight: 600; font-size: 14px; }
+  .btn-sm { padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; }
+  .btn-sm:hover { background: #e5e7eb; }
+  .period-row { display: grid; grid-template-columns: 80px 1fr 1fr auto; gap: 12px; align-items: center; margin-bottom: 10px; }
+  
+  /* Buttons */
+  .btn-run { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 24px; }
+  .btn-run:hover { background: var(--primary-hover); }
+
+  /* Outputs */
+  .metrics { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+  .metric { flex: 1; min-width: 200px; background: #fff; border-radius: 6px; padding: 16px; border: 1px solid var(--border-light); border-left: 4px solid var(--primary); }
+  .metric-lbl { font-size: 11px; color: var(--text-sec); margin-bottom: 4px; text-transform: uppercase; font-weight: 600; }
+  .metric-val { font-size: 22px; font-weight: 700; color: #111827; }
+  
+  .dispatch-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; background: #fff;}
+  .dispatch-table th, .dispatch-table td { border: 1px solid var(--border-light); padding: 8px 12px; text-align: left; }
+  .dispatch-table th { background: var(--bg-sec); font-weight: 600; }
+  .dispatch-table tr:hover td { background: var(--bg-sec); }
+
+  /* Tabs */
+  .tabs-container { margin-bottom: 16px; border-bottom: 2px solid var(--border-light); display: flex; gap: 20px; }
+  .tab-btn { background: none; border: none; font-size: 15px; font-weight: 600; color: var(--text-sec); padding: 10px 4px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.2s, border-color 0.2s; }
+  .tab-btn:hover { color: var(--text-main); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* Matrix / Visualization */
+  .mwrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; background: white; position: relative; }
+  .hdr-row { display: flex; height: 40px; background: var(--bg-sec); border-bottom: 1px solid var(--border-light); }
+  .lbl-col { width: 120px; min-width: 120px; border-right: 1px solid var(--border); background: var(--bg-sec); position: sticky; left: 0; z-index: 10; display: flex; align-items: center; padding-left: 12px; font-weight: 600; font-size: 12px; }
+  .tl-hdr { flex: 1; position: relative; height: 100%; min-width: 800px; }
+  .tlbl { position: absolute; font-size: 11px; color: var(--text-sec); top: 50%; transform: translate(-50%,-50%); white-space: nowrap; font-weight: 500; }
+  .vrow { display: flex; border-bottom: 1px solid #f3f4f6; height: 50px; align-items: stretch; }
+  .vrow:last-child { border-bottom: none; }
+  .rlbl { width: 120px; min-width: 120px; border-right: 1px solid var(--border); padding: 0 12px; display: flex; flex-direction: column; justify-content: center; background: white; position: sticky; left: 0; z-index: 5; font-size: 12px; font-weight: 600; }
+  .rlbl span.sub { font-size: 10px; color: var(--text-sec); font-weight: 400; }
+  .tla { position: relative; flex: 1; min-width: 800px; background: repeating-linear-gradient(90deg, transparent, transparent 49px, #f9fafb 49px, #f9fafb 50px); }
+  
+  .bar { position: absolute; top: 8px; bottom: 8px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; border: 1px solid; overflow: hidden; white-space: nowrap; padding: 0 4px; color: white; text-shadow: 0 1px 1px rgba(0,0,0,0.2); box-shadow: 0 1px 2px rgba(0,0,0,0.1); transition: transform 0.1s; }
+  .bar:hover { transform: scaleY(1.1); z-index: 2; }
+  
+  /* Period Shading */
+  .period-zone { position: absolute; top: 0; bottom: 0; border-right: 1px dashed rgba(0,0,0,0.1); background: rgba(0,0,0,0.02); pointer-events: none; z-index: 1; }
+
+  #out-container { display: none; }
+
+  /* Toast Notification */
+  .toast { visibility: hidden; min-width: 250px; background-color: var(--primary); color: #fff; text-align: center; border-radius: 6px; padding: 16px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.1); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
+  .toast.show { visibility: visible; opacity: 1; bottom: 50px; }
+
+  .period-badge { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <section id="section-simulator">
+    <h1>Route Simulator</h1>
+    
+    <div class="cfg-grid">
+      <div class="fld">
+        <label>Route Type</label>
+        <select id="in-type">
+          <option value="loop">Loop Route</option>
+          <option value="non-loop">Non-Loop Route (Mapped to Loop)</option>
+        </select>
+      </div>
+      <div class="fld">
+        <label>Route Name</label>
+        <input type="text" id="in-name" value="City Center Loop">
+      </div>
+      <div class="fld">
+        <label>Number of Units</label>
+        <input type="number" id="in-units" value="6" min="1">
+      </div>
+      <div class="fld">
+        <label>Start of Operation</label>
+        <input type="time" id="in-start" value="05:00">
+      </div>
+      <div class="fld">
+        <label>Layover / Recovery Time (min)</label>
+        <input type="number" id="in-layover" value="10" min="0" step="1" title="Terminal dwell, driver recovery, and buffer time between trips. Added to RT to compute headway.">
+      </div>
+    </div>
+
+    <div class="period-builder">
+      <div class="period-hdr">
+        <span>Operating Periods</span>
+        <div>
+          <button class="btn-sm" onclick="addPeriod()">+ Add</button>
+          <button class="btn-sm" onclick="removePeriod()">− Remove</button>
+        </div>
+      </div>
+      <div id="period-list">
+        </div>
+    </div>
+
+    <button class="btn-run" onclick="runSimulation()">Run Simulation</button>
+
+    <div id="out-container">
+      <div class="metrics">
+        <div class="metric"><div class="metric-lbl">Total Daily Trips</div><div class="metric-val" id="m-total">0</div></div>
+        <div class="metric"><div class="metric-lbl">Trips / Vehicle</div><div class="metric-val" id="m-tpv">0</div></div>
+        <div class="metric"><div class="metric-lbl">End of Last Trip</div><div class="metric-val" id="m-end">--:--</div></div>
+      </div>
+
+      <table class="dispatch-table" id="dispatch-table">
+        <thead>
+          <tr>
+            <th>Period</th>
+            <th>Time Window</th>
+            <th>Duration</th>
+            <th>Roundtrip Time</th>
+            <th>Layover</th>
+            <th>Cycle Time</th>
+            <th>Dispatch Interval</th>
+          </tr>
+        </thead>
+        <tbody id="dispatch-body"></tbody>
+      </table>
+
+      <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab(event, 'tab-timetable')">Vehicle Timetable</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-schedules')">Vehicle Schedules</button>
+        <button class="tab-btn" onclick="switchTab(event, 'tab-dispatch')">Dispatching Schedule</button>
+      </div>
+
+      <div id="tab-timetable" class="tab-content active">
+        <div class="mwrap">
+          <div id="matrix"></div>
+        </div>
+      </div>
+
+      <div id="tab-schedules" class="tab-content">
+        <div style="overflow-x: auto;">
+          <table class="dispatch-table" id="unit-schedules-table">
+            </table>
+        </div>
+      </div>
+
+      <div id="tab-dispatch" class="tab-content">
+        <div style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-light); border-radius: 6px;">
+          <table class="dispatch-table" id="dispatch-ledger-table" style="margin-bottom: 0; border: none;">
+            <thead style="position: sticky; top: 0; z-index: 10;">
+              <tr>
+                <th>Departure Time</th>
+                <th>Unit ID</th>
+                <th>Operating Period</th>
+              </tr>
+            </thead>
+            <tbody id="dispatch-ledger-body">
+              </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="section-about">
+    <h1>About the Simulator</h1>
+    <h2>Overview</h2>
+    <p>This simulator provides a deterministic model for transit planning, designed to visualize how a fleet of vehicles handles a schedule across varying operational periods in a day. It is specifically tailored to discretize variations in Roundtrip (RT) times resulting from changing traffic conditions (e.g., peak vs. off-peak hours).</p>
+
+    <h2>Processes & Formulas</h2>
+    <ul>
+      <li><strong>Total Operating Time:</strong> Computed as the sum of all individual Period Durations. Any trip started must be completed before this total time elapses.</li>
+      <li><strong>Dispatch Interval (Headway):</strong> Calculated per period as <code>(Roundtrip Time + Layover) / Number of Units</code>. Cycle time includes both travel and terminal recovery time, giving a realistic headway.</li>
+      <li><strong>Trip Generation Algorithm:</strong> 
+        <ul>
+          <li>Unit 1 departs at <code>Start of Operation</code>. Subsequent units are staggered by the Period 1 Dispatch Interval.</li>
+          <li>For any given departure time, the simulator determines which "Period" the time falls into to assign the correct Roundtrip Time.</li>
+          <li>The next departure for a unit is calculated as <code>Current Start Time + Current Roundtrip Time + Layover</code>.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2>Key Assumptions</h2>
+    <ul>
+      <li><strong>Homogeneous Fleet:</strong> All units are identical and operate at the assumed speeds of their respective periods.</li>
+      <li><strong>Explicit Layover:</strong> Recovery time, terminal dwell, and driver buffer are modeled as a separate global input. Roundtrip Time should represent travel time only; layover is added on top to compute cycle time and headway.</li>
+      <li><strong>Punctuality:</strong> Vehicles depart exactly as scheduled, without probabilistic traffic delays or stochastic bunching.</li>
+    </ul>
+
+    <h2>Limitations (Transport Planning Context)</h2>
+    <ul>
+      <li><strong>Non-Loop Routes:</strong> True non-loop routes require modeling A-to-B and B-to-A deadheading or dwell times at terminals. This alpha version maps non-loop inputs to loop logic.</li>
+      <li><strong>Stochasticity:</strong> Fails to account for real-world variance (passenger boarding delays, traffic lights) leading to bus bunching.</li>
+      <li><strong>Crew Scheduling:</strong> Does not map driver shifts, union constraints, or mandatory meal breaks against the vehicle blocks.</li>
+    </ul>
+  </section>
+
+  <section id="section-changelog">
+    <h1>Changelog</h1>
+    <ul>
+      <li><strong>2026-04-08 (Latest):</strong> Fixed zero-layover bug where vehicles immediately restarted trips upon arrival. Added explicit Layover / Recovery Time input (global). Corrected headway formula from <code>RT / N</code> to <code>(RT + Layover) / N</code>. Added overlap guard in trip generation. Exposed Layover and Cycle Time columns in Period output table. Updated About section to reflect layover as an explicit parameter.</li>
+      <li><strong>2026-04-08:</strong> Removed section numbers. Added a toast notification upon successful simulation. Bound trip coloring to respective operating periods for better visual discretization. Included explicit time windows in the Period output table. Created a 3-tab output system (Vehicle Timetable, Vehicle Schedules, and Dispatching Schedule). Updated LLM architectural documentation.</li>
+      <li><strong>2026-04-08 (Earlier):</strong> Segmented application architecture. Introduced multi-period dispatch simulation for Loop Routes. Added LLM Readme documentation and architectural tracking. Added discretizing capabilities for Roundtrip variation.</li>
+      <li><strong>v1.1.0 (Previous):</strong> Added inputs for Number of units, RT length, and Speed. Added output for End of operation.</li>
+      <li><strong>v1.0.0 (Legacy):</strong> Initial deterministic timeline visualization with fixed clicking interactions.</li>
+    </ul>
+  </section>
+</div>
+
+<div id="toast" class="toast">Simulation Successfully Executed!</div>
+
+<script>
+// --- State ---
+let periods = [
+  { id: 1, durationHr: 4, rtHr: 2.0 },  // Morning Peak
+  { id: 2, durationHr: 6, rtHr: 1.5 },  // Midday Off-peak
+  { id: 3, durationHr: 4, rtHr: 2.5 }   // Evening Peak
+];
+
+const COLORS = ['#0F6E56', '#1d4ed8', '#b45309', '#6d28d9', '#be123c', '#0f766e', '#a16207'];
+
+// --- Utilities ---
+function formatTimeAMPM(totalMin) {
+  const h = Math.floor(totalMin / 60) % 24;
+  const m = Math.floor(totalMin % 60);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const displayH = h % 12 === 0 ? 12 : h % 12;
+  return `${String(displayH).padStart(2,'0')}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+
+function showToast() {
+  const toast = document.getElementById("toast");
+  toast.className = "toast show";
+  setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+}
+
+function switchTab(evt, tabId) {
+  const contents = document.getElementsByClassName("tab-content");
+  for (let i = 0; i < contents.length; i++) contents[i].classList.remove("active");
+  const btns = document.getElementsByClassName("tab-btn");
+  for (let i = 0; i < btns.length; i++) btns[i].classList.remove("active");
+  document.getElementById(tabId).classList.add("active");
+  evt.currentTarget.classList.add("active");
+}
+
+// --- UI / Period Management ---
+function renderPeriods() {
+  const container = document.getElementById('period-list');
+  container.innerHTML = '';
+  periods.forEach((p, index) => {
+    container.innerHTML += `
+      <div class="period-row">
+        <div style="font-size:12px; font-weight:600; color:#6b7280;">Period ${index + 1}</div>
+        <div class="fld"><label>Duration (hrs)</label><input type="number" step="0.5" min="0.5" value="${p.durationHr}" onchange="updateP(${index}, 'dur', this.value)"></div>
+        <div class="fld"><label>Roundtrip (hrs)</label><input type="number" step="0.1" min="0.1" value="${p.rtHr}" onchange="updateP(${index}, 'rt', this.value)"></div>
+      </div>
+    `;
+  });
+}
+
+function updateP(idx, field, val) {
+  if(field === 'dur') periods[idx].durationHr = parseFloat(val) || 0;
+  if(field === 'rt') periods[idx].rtHr = parseFloat(val) || 0;
+}
+
+function addPeriod() {
+  periods.push({ id: Date.now(), durationHr: 4, rtHr: 2 });
+  renderPeriods();
+}
+
+function removePeriod() {
+  if (periods.length > 1) { periods.pop(); renderPeriods(); }
+}
+
+// --- Simulation Logic ---
+function runSimulation() {
+  document.getElementById('out-container').style.display = 'block';
+
+  const units = parseInt(document.getElementById('in-units').value) || 1;
+  const startStr = document.getElementById('in-start').value || "05:00";
+  const [sH, sM] = startStr.split(':').map(Number);
+  const startMin = (sH * 60) + sM;
+  const layoverMin = parseInt(document.getElementById('in-layover').value) || 0;
+
+  let totalDurationMin = 0;
+  let pBoundaries = []; 
+  let currentStart = startMin;
+
+  const tBody = document.getElementById('dispatch-body');
+  tBody.innerHTML = '';
+
+  periods.forEach((p, i) => {
+    const durMin = p.durationHr * 60;
+    const rtMin = p.rtHr * 60;
+    const interval = Math.round((rtMin + layoverMin) / units);
+    const endStart = currentStart + durMin;
+    
+    pBoundaries.push({
+      idx: i,
+      start: currentStart,
+      end: endStart,
+      rt: rtMin,
+      interval: interval,
+      color: COLORS[i % COLORS.length]
+    });
+
+    tBody.innerHTML += `
+      <tr>
+        <td>
+          <span class="period-badge" style="background:${COLORS[i % COLORS.length]};"></span>
+          Period ${i + 1}
+        </td>
+        <td><strong>${formatTimeAMPM(currentStart)} - ${formatTimeAMPM(endStart)}</strong></td>
+        <td>${p.durationHr} hrs</td>
+        <td>${p.rtHr} hrs</td>
+        <td>${layoverMin} min</td>
+        <td>${((p.rtHr * 60) + layoverMin)} min</td>
+        <td><strong>${interval} min</strong></td>
+      </tr>
+    `;
+
+    currentStart += durMin;
+    totalDurationMin += durMin;
+  });
+
+  const endOperationMin = startMin + totalDurationMin;
+  const initialDispatchInterval = pBoundaries[0].interval;
+
+  let allTrips = [];
+  let tripsPerUnitTracker = Array(units).fill(0);
+  let lastTripEnd = 0;
+
+  for(let u = 0; u < units; u++) {
+    let t = startMin + (u * initialDispatchInterval);
+    
+    while (t < endOperationMin) {
+      let activePeriod = pBoundaries.find(pb => t >= pb.start && t < pb.end);
+      if (!activePeriod) break; 
+
+      let tripEnd = t + activePeriod.rt;
+
+      const lastUnitTrip = allTrips.filter(tr => tr.vId === u).slice(-1)[0];
+      if (lastUnitTrip && t < lastUnitTrip.end) {
+        t = lastUnitTrip.end + layoverMin;
+        continue;
+      }
+
+      if (tripEnd <= endOperationMin) {
+        allTrips.push({ vId: u, start: t, end: tripEnd, periodIdx: activePeriod.idx });
+        tripsPerUnitTracker[u]++;
+        if (tripEnd > lastTripEnd) lastTripEnd = tripEnd;
+      }
+      
+      t = tripEnd + layoverMin; 
+    }
+  }
+
+  // Generate Tab Outputs
+  renderMatrix(units, startMin, totalDurationMin, allTrips, pBoundaries);
+  renderVehicleSchedules(units, allTrips, Math.max(...tripsPerUnitTracker));
+  renderDispatchLedger(allTrips, pBoundaries);
+
+  // Set Metrics
+  const minT = Math.min(...tripsPerUnitTracker);
+  const maxT = Math.max(...tripsPerUnitTracker);
+  document.getElementById('m-total').textContent = allTrips.length;
+  document.getElementById('m-tpv').textContent = minT === maxT ? minT : `${minT} - ${maxT}`;
+  document.getElementById('m-end').textContent = lastTripEnd > 0 ? formatTimeAMPM(lastTripEnd) : '--:--';
+
+  showToast();
+}
+
+function renderMatrix(units, startMin, totalDur, trips, pBoundaries) {
+  const TLPX = Math.max(1000, totalDur * 1.5); 
+  const PPM = TLPX / totalDur;
+
+  let html = `<div class="hdr-row"><div class="lbl-col">Timeline</div><div class="tl-hdr">`;
+  
+  for(let m = 0; m <= totalDur; m += 60) {
+    html += `<span class="tlbl" style="left:${m * PPM}px">${formatTimeAMPM(startMin + m)}</span>`;
+  }
+  
+  pBoundaries.forEach((pb, i) => {
+    const leftPx = (pb.start - startMin) * PPM;
+    const widthPx = (pb.end - pb.start) * PPM;
+    html += `<div class="period-zone" style="left:${leftPx}px; width:${widthPx}px; border-left: 2px solid ${pb.color};">
+      <div style="position:absolute; top:2px; left:4px; font-size:10px; font-weight:700; color:${pb.color};">P${i+1}</div>
+    </div>`;
+  });
+
+  html += '</div></div>';
+
+  for(let i = 0; i < units; i++) {
+    const unitTrips = trips.filter(t => t.vId === i);
+    html += `<div class="vrow">
+      <div class="rlbl">Unit ${String(i + 1).padStart(2, '0')}<span class="sub">${unitTrips.length} trips</span></div>
+      <div class="tla">`;
+    
+    pBoundaries.forEach(pb => {
+      const leftPx = (pb.start - startMin) * PPM;
+      const widthPx = (pb.end - pb.start) * PPM;
+      html += `<div class="period-zone" style="left:${leftPx}px; width:${widthPx}px;"></div>`;
+    });
+
+    unitTrips.forEach(tr => {
+      const startPx = (tr.start - startMin) * PPM;
+      const widthPx = (tr.end - tr.start) * PPM;
+      const pColor = COLORS[tr.periodIdx % COLORS.length];
+      
+      html += `<div class="bar" style="left:${startPx}px; width:${widthPx}px; background:${pColor}; border-color:rgba(0,0,0,0.2);">
+        ${formatTimeAMPM(tr.start)} - ${formatTimeAMPM(tr.end)}
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  }
+
+  document.getElementById('matrix').innerHTML = `<div style="min-width:${TLPX + 120}px;">${html}</div>`;
+}
+
+function renderVehicleSchedules(units, trips, maxTrips) {
+  let html = '<thead><tr><th rowspan="2" style="background:var(--bg-sec); position:sticky; left:0; z-index:2;">UNIT</th>';
+  for (let i = 1; i <= maxTrips; i++) {
+    html += `<th colspan="2" style="text-align:center;">TRIP ${i}</th>`;
+  }
+  html += '</tr><tr>';
+  for (let i = 1; i <= maxTrips; i++) {
+    html += '<th>TIME START</th><th>TIME END</th>';
+  }
+  html += '</tr></thead><tbody>';
+
+  for(let u = 0; u < units; u++) {
+    const unitTrips = trips.filter(t => t.vId === u);
+    html += `<tr><td style="font-weight:600; background:#fff; position:sticky; left:0; z-index:1; border-right:2px solid var(--border-light);">Unit ${String(u + 1).padStart(2, '0')}</td>`;
+    
+    for (let i = 0; i < maxTrips; i++) {
+      if (i < unitTrips.length) {
+        const pColor = COLORS[unitTrips[i].periodIdx % COLORS.length];
+        html += `
+          <td style="color:${pColor}; font-weight:500;">${formatTimeAMPM(unitTrips[i].start)}</td>
+          <td>${formatTimeAMPM(unitTrips[i].end)}</td>
+        `;
+      } else {
+        html += `<td style="color:var(--border);">--:--</td><td style="color:var(--border);">--:--</td>`;
+      }
+    }
+    html += '</tr>';
+  }
+  
+  html += '</tbody>';
+  document.getElementById('unit-schedules-table').innerHTML = html;
+}
+
+function renderDispatchLedger(trips, pBoundaries) {
+  // Flatten and sort all trips chronologically by start time
+  const sortedTrips = [...trips].sort((a, b) => a.start - b.start);
+  let html = '';
+
+  sortedTrips.forEach(tr => {
+    const period = pBoundaries.find(p => p.idx === tr.periodIdx);
+    html += `
+      <tr>
+        <td style="font-weight:700; color:#111827;">${formatTimeAMPM(tr.start)}</td>
+        <td style="font-weight:600;">Unit ${String(tr.vId + 1).padStart(2, '0')}</td>
+        <td>
+          <span class="period-badge" style="background:${period.color};"></span>
+          Period ${tr.periodIdx + 1}
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById('dispatch-ledger-body').innerHTML = html;
+}
+
+// Init
+renderPeriods();
+</script>
+</body>
+</html>
