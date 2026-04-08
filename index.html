@@ -7,8 +7,11 @@
 
 <style>
   :root {
-    --primary: #0F6E56;
-    --primary-hover: #0c5945;
+    /* Updated Branding Colors */
+    --primary: #335fb8;
+    --primary-hover: #284a8f;
+    --secondary-accent: #ce1127;
+    
     --bg-main: #f9fafb;
     --bg-panel: #ffffff;
     --bg-sec: #f3f4f6;
@@ -239,11 +242,12 @@
   <section id="section-changelog">
     <h1>Changelog</h1>
     <ul>
-      <li><strong>2026-04-08 (Latest):</strong> Fixed zero-layover bug where vehicles immediately restarted trips upon arrival. Added explicit Layover / Recovery Time input (global). Corrected headway formula from <code>RT / N</code> to <code>(RT + Layover) / N</code>. Added overlap guard in trip generation. Exposed Layover and Cycle Time columns in Period output table. Updated About section to reflect layover as an explicit parameter.</li>
-      <li><strong>2026-04-08:</strong> Removed section numbers. Added a toast notification upon successful simulation. Bound trip coloring to respective operating periods for better visual discretization. Included explicit time windows in the Period output table. Created a 3-tab output system (Vehicle Timetable, Vehicle Schedules, and Dispatching Schedule). Updated LLM architectural documentation.</li>
-      <li><strong>2026-04-08 (Earlier):</strong> Segmented application architecture. Introduced multi-period dispatch simulation for Loop Routes. Added LLM Readme documentation and architectural tracking. Added discretizing capabilities for Roundtrip variation.</li>
-      <li><strong>v1.1.0 (Previous):</strong> Added inputs for Number of units, RT length, and Speed. Added output for End of operation.</li>
-      <li><strong>v1.0.0 (Legacy):</strong> Initial deterministic timeline visualization with fixed clicking interactions.</li>
+      <li><strong>2026-04-08:</strong> Updated branding to Blue (#335fb8) and Red (#ce1127). Red theme integrated into simulation colors.</li>
+      <li><strong>2026-04-08 (Fixed Layover):</strong> Fixed zero-layover bug. Added explicit Layover / Recovery Time input. Corrected headway formula to <code>(RT + Layover) / N</code>. Exposed Cycle Time columns.</li>
+      <li><strong>2026-04-08 (UI Update):</strong> Removed section numbers. Added toast notification. Bound trip coloring to periods. Created 3-tab output system.</li>
+      <li><strong>2026-04-08 (Earlier):</strong> Segmented architecture. Multi-period dispatch simulation.</li>
+      <li><strong>v1.1.0:</strong> Added inputs for units, RT, and Speed. Added end of operation output.</li>
+      <li><strong>v1.0.0:</strong> Initial deterministic timeline visualization.</li>
     </ul>
   </section>
 </div>
@@ -258,7 +262,8 @@ let periods = [
   { id: 3, durationHr: 4, rtHr: 2.5 }   // Evening Peak
 ];
 
-const COLORS = ['#0F6E56', '#1d4ed8', '#b45309', '#6d28d9', '#be123c', '#0f766e', '#a16207'];
+// Updated Visualization Colors with Branding
+const COLORS = ['#335fb8', '#ce1127', '#b45309', '#6d28d9', '#0f766e', '#1d4ed8', '#be123c'];
 
 // --- Utilities ---
 function formatTimeAMPM(totalMin) {
@@ -380,6 +385,7 @@ function runSimulation() {
 
       let tripEnd = t + activePeriod.rt;
 
+      // Guard against overlap in high-layover scenarios
       const lastUnitTrip = allTrips.filter(tr => tr.vId === u).slice(-1)[0];
       if (lastUnitTrip && t < lastUnitTrip.end) {
         t = lastUnitTrip.end + layoverMin;
@@ -493,7 +499,6 @@ function renderVehicleSchedules(units, trips, maxTrips) {
 }
 
 function renderDispatchLedger(trips, pBoundaries) {
-  // Flatten and sort all trips chronologically by start time
   const sortedTrips = [...trips].sort((a, b) => a.start - b.start);
   let html = '';
 
