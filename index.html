@@ -29,34 +29,67 @@
   p, li { font-size: 14px; color: #4b5563; margin-bottom: 8px; }
   ul { margin-left: 20px; margin-bottom: 16px; }
 
-  .cfg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 24px; }
+  .cfg-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 24px; }
   .fld { display: flex; flex-direction: column; gap: 6px; }
   .fld label { font-size: 12px; font-weight: 600; color: #374151; text-transform: uppercase; letter-spacing: 0.5px; }
   .fld input, .fld select { padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: #fff; }
   .fld input:focus, .fld select:focus { outline: none; border-color: var(--primary); }
+  .fld input.input-error { border-color: var(--secondary-accent); background: #fff5f5; }
 
-  .period-builder { background: var(--bg-sec); padding: 16px; border-radius: 6px; margin-bottom: 24px; border: 1px solid var(--border-light); }
+  .period-builder { background: var(--bg-sec); padding: 16px; border-radius: 6px; margin-bottom: 16px; border: 1px solid var(--border-light); }
   .period-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .period-hdr span { font-weight: 600; font-size: 14px; }
   .btn-sm { padding: 4px 10px; font-size: 14px; background: #fff; border: 1px solid var(--border); border-radius: 4px; cursor: pointer; }
   .btn-sm:hover { background: #e5e7eb; }
 
-  .period-row { display: grid; gap: 12px; align-items: center; margin-bottom: 10px; }
-  .period-row.loop    { grid-template-columns: 80px 1fr 1fr; }
-  .period-row.nonloop { grid-template-columns: 80px 1fr 1fr 1fr; }
+  /* #6: period rows with target hw column */
+  .period-row { display: grid; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .period-row.loop    { grid-template-columns: 70px 1fr 1fr 1fr; }
+  .period-row.nonloop { grid-template-columns: 70px 1fr 1fr 1fr 1fr; }
+
+  .val-box { padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; display: none; }
+  .val-box.errors   { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+  .val-box.warnings { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; }
+  .val-box strong   { display: block; margin-bottom: 4px; }
+  .val-box ul       { margin: 4px 0 0 16px; }
+  .val-box li       { margin-bottom: 2px; color: inherit; }
 
   .btn-run { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 24px; }
   .btn-run:hover { background: var(--primary-hover); }
 
-  .metrics { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-  .metric { flex: 1; min-width: 200px; background: #fff; border-radius: 6px; padding: 16px; border: 1px solid var(--border-light); border-left: 4px solid var(--primary); }
-  .metric-lbl { font-size: 11px; color: var(--text-sec); margin-bottom: 4px; text-transform: uppercase; font-weight: 600; }
-  .metric-val { font-size: 22px; font-weight: 700; color: #111827; }
+  .metrics { display: flex; gap: 14px; margin-bottom: 24px; flex-wrap: wrap; }
+  .metric { flex: 1; min-width: 140px; background: #fff; border-radius: 6px; padding: 14px 16px; border: 1px solid var(--border-light); border-left: 4px solid var(--primary); }
+  .metric.warn-metric { border-left-color: var(--secondary-accent); }
+  .metric.pphpd-metric { border-left-color: #059669; }
+  .metric.km-metric    { border-left-color: #7c3aed; }
+  .metric-lbl { font-size: 11px; color: var(--text-sec); margin-bottom: 4px; text-transform: uppercase; font-weight: 600; line-height: 1.3; }
+  .metric-val { font-size: 20px; font-weight: 700; color: #111827; }
+  .metric-val.warn { color: var(--secondary-accent); }
 
-  .dispatch-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13px; background: #fff; }
+  .dispatch-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 13px; background: #fff; }
   .dispatch-table th, .dispatch-table td { border: 1px solid var(--border-light); padding: 8px 12px; text-align: left; }
   .dispatch-table th { background: var(--bg-sec); font-weight: 600; }
+  .dispatch-table th.realized-col { background: #eef2ff; }
+  .dispatch-table th.fleet-col    { background: #f0fdf4; }
+  .dispatch-table th.status-col   { background: #f5f3ff; }
   .dispatch-table tr:hover td { background: var(--bg-sec); }
+
+  .status-ok   { display: inline-block; color: #059669; font-weight: 700; font-size: 13px; }
+  .status-warn { display: inline-block; color: #dc2626; font-weight: 600; font-size: 12px;
+                 background: #fef2f2; padding: 2px 7px; border-radius: 3px; white-space: nowrap; }
+
+  /* #7: Route name bar above tabs */
+  .route-name-bar { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 12px;
+                    padding: 8px 14px; background: #eef2ff; border-radius: 6px; border-left: 4px solid var(--primary); }
+
+  .export-bar { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light); flex-wrap: wrap; }
+  .export-bar span { font-size: 12px; color: var(--text-sec); }
+  .btn-export { padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--primary); background: #fff; border: 1px solid var(--primary); border-radius: 4px; cursor: pointer; transition: 0.15s; }
+  .btn-export:hover { background: #eef2ff; }
+  .export-bar select { padding: 6px 10px; font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: #fff; }
+
+  .table-note { font-size: 12px; color: var(--text-sec); margin-bottom: 20px; line-height: 1.6; }
+  .table-note strong { color: #374151; }
 
   .tabs-container { margin-bottom: 16px; border-bottom: 2px solid var(--border-light); display: flex; gap: 20px; flex-wrap: wrap; }
   .tab-btn { background: none; border: none; font-size: 15px; font-weight: 600; color: var(--text-sec); padding: 10px 4px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: color 0.2s, border-color 0.2s; }
@@ -81,11 +114,8 @@
   .bar { position: absolute; top: 8px; bottom: 8px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; border: 1px solid; overflow: hidden; white-space: nowrap; padding: 0 4px; color: white; text-shadow: 0 1px 1px rgba(0,0,0,0.25); box-shadow: 0 1px 2px rgba(0,0,0,0.1); transition: transform 0.1s; cursor: default; }
   .bar:hover { transform: scaleY(1.1); z-index: 2; }
   .bar.ba-leg { opacity: 0.6; }
-
-  /* Overrun indicator: trips extending past operation end */
   .bar.overrun { border-style: dashed; }
 
-  .period-zone { position: absolute; top: 0; bottom: 0; border-right: 1px dashed rgba(0,0,0,0.1); background: rgba(0,0,0,0.02); pointer-events: none; z-index: 1; }
   .endop-line { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--secondary-accent); opacity: 0.5; pointer-events: none; z-index: 3; }
 
   #out-container { display: none; }
@@ -95,17 +125,22 @@
   .toast.show { visibility: visible; opacity: 1; bottom: 50px; }
 
   .period-badge { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
-
   .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 3px; vertical-align: middle; margin-left: 6px; }
   .tag-ab { background: #dbeafe; color: #1e40af; }
   .tag-ba { background: #fce7f3; color: #9d174d; }
 
   .overrun-note { font-size: 12px; color: var(--text-sec); margin-bottom: 12px; }
   .overrun-note span { display: inline-block; width: 14px; height: 8px; border: 1px dashed var(--secondary-accent); border-radius: 2px; vertical-align: middle; margin-right: 4px; }
+
+  .cl-toggle { width: 100%; text-align: left; background: var(--bg-sec); border: 1px solid var(--border-light); border-radius: 6px; padding: 10px 14px; cursor: pointer; font-size: 15px; font-weight: 600; color: #374151; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; transition: background 0.15s; }
+  .cl-toggle:hover { background: #e5e7eb; }
+  .cl-toggle .cl-arrow { font-size: 12px; transition: transform 0.2s; display: inline-block; }
+  .cl-toggle.open .cl-arrow { transform: rotate(180deg); }
+  .cl-body { display: none; margin-bottom: 16px; padding: 0 4px; }
+  .cl-body.open { display: block; }
 </style>
 </head>
 <body>
-
 <div class="container">
   <section id="section-simulator">
     <h1>Route Simulator</h1>
@@ -138,13 +173,35 @@
         <input type="time" id="in-start" value="05:00">
       </div>
       <div class="fld">
-        <label id="lbl-layover-a">Layover / Recovery Time (min)</label>
+        <label id="lbl-layover-a">Layover Time (min)</label>
         <input type="number" id="in-layover" value="10" min="0" step="1"
-          title="Terminal dwell, driver recovery, and buffer time. For non-loop: layover at Terminal A.">
+          title="Terminal dwell and driver recovery time. For non-loop: layover at Terminal A.">
       </div>
       <div class="fld hidden" id="wrap-layover-b">
-        <label>Layover at Terminal B (min)</label>
+        <label>Layover Time at B (min)</label>
         <input type="number" id="in-layover-b" value="10" min="0" step="1">
+      </div>
+      <!-- #9: Seating Capacity -->
+      <div class="fld">
+        <label>Seating Capacity (per unit)</label>
+        <input type="number" id="in-capacity" value="22" min="1" step="1"
+          title="Number of seats per vehicle. Used to compute Peak PPHPD (theoretical service capacity).">
+      </div>
+      <!-- Route Length -->
+      <div class="fld" id="wrap-loop-length">
+        <label>Loop Length (km)</label>
+        <input type="number" id="in-loop-length" min="0" step="0.1" placeholder="Optional"
+          title="Full loop circuit distance. Used to compute Km Run metrics (Uniform mode).">
+      </div>
+      <div class="fld hidden" id="wrap-length-ab">
+        <label>Route Length A→B (km)</label>
+        <input type="number" id="in-length-ab" min="0" step="0.1" placeholder="Optional"
+          title="One-way distance Terminal A to Terminal B.">
+      </div>
+      <div class="fld hidden" id="wrap-length-ba">
+        <label>Route Length B→A (km)</label>
+        <input type="number" id="in-length-ba" min="0" step="0.1" placeholder="Optional"
+          title="One-way distance Terminal B to Terminal A.">
       </div>
     </div>
 
@@ -159,11 +216,13 @@
       <div id="period-list"></div>
     </div>
 
+    <div id="val-box" class="val-box"></div>
     <button class="btn-run" onclick="runSimulation()">Run Simulation</button>
 
     <div id="out-container">
 
-      <div class="metrics">
+      <!-- Metrics row -->
+      <div class="metrics" id="metrics-row">
         <div class="metric">
           <div class="metric-lbl" id="m-total-lbl">Total Daily Trips</div>
           <div class="metric-val" id="m-total">0</div>
@@ -172,25 +231,80 @@
           <div class="metric-lbl" id="m-tpv-lbl">Trips / Vehicle</div>
           <div class="metric-val" id="m-tpv">0</div>
         </div>
-        <div class="metric">
+        <!-- #1: Last Trip Start – loop (single terminal) -->
+        <div class="metric" id="wrap-m-last-start">
+          <div class="metric-lbl">Last Trip Start</div>
+          <div class="metric-val" id="m-last-start">--:--</div>
+        </div>
+        <!-- #1: Last Trip Start at A & B – non-loop -->
+        <div class="metric hidden" id="wrap-m-last-start-a">
+          <div class="metric-lbl">Last Trip Start at A</div>
+          <div class="metric-val" id="m-last-start-a">--:--</div>
+        </div>
+        <div class="metric hidden" id="wrap-m-last-start-b">
+          <div class="metric-lbl">Last Trip Start at B</div>
+          <div class="metric-val" id="m-last-start-b">--:--</div>
+        </div>
+        <!-- Last Arrival – loop -->
+        <div class="metric" id="wrap-m-end">
           <div class="metric-lbl">End of Last Trip</div>
           <div class="metric-val" id="m-end">--:--</div>
         </div>
+        <!-- Last Arrival – non-loop split -->
+        <div class="metric hidden" id="wrap-m-end-a">
+          <div class="metric-lbl">Last Arrival at A</div>
+          <div class="metric-val" id="m-end-a">--:--</div>
+        </div>
+        <div class="metric hidden" id="wrap-m-end-b">
+          <div class="metric-lbl">Last Arrival at B</div>
+          <div class="metric-val" id="m-end-b">--:--</div>
+        </div>
+        <!-- Overrun trips -->
+        <div class="metric" id="wrap-m-overrun">
+          <div class="metric-lbl">Overrun Trips</div>
+          <div class="metric-val" id="m-overrun">0</div>
+        </div>
+        <!-- #10: Peak PPHPD – loop -->
+        <div class="metric pphpd-metric hidden" id="wrap-m-pphpd">
+          <div class="metric-lbl">Peak PPHPD<br><span style="text-transform:none;font-weight:400">(Service Capacity)</span></div>
+          <div class="metric-val" id="m-pphpd">–</div>
+        </div>
+        <!-- #10: Peak PPHPD – non-loop per direction -->
+        <div class="metric pphpd-metric hidden" id="wrap-m-pphpd-ab">
+          <div class="metric-lbl">Peak PPHPD A→B<br><span style="text-transform:none;font-weight:400">(Service Capacity)</span></div>
+          <div class="metric-val" id="m-pphpd-ab">–</div>
+        </div>
+        <div class="metric pphpd-metric hidden" id="wrap-m-pphpd-ba">
+          <div class="metric-lbl">Peak PPHPD B→A<br><span style="text-transform:none;font-weight:400">(Service Capacity)</span></div>
+          <div class="metric-val" id="m-pphpd-ba">–</div>
+        </div>
+        <!-- Km Run metrics — Uniform mode only -->
+        <div class="metric km-metric hidden" id="wrap-m-km-unit">
+          <div class="metric-lbl">Km Run per Unit</div>
+          <div class="metric-val" id="m-km-unit">–</div>
+        </div>
+        <div class="metric km-metric hidden" id="wrap-m-km-total">
+          <div class="metric-lbl">Total Km Run / Day</div>
+          <div class="metric-val" id="m-km-total">–</div>
+        </div>
       </div>
 
+      <!-- Summary Table -->
       <div style="overflow-x: auto;">
         <table class="dispatch-table" id="dispatch-table">
           <thead><tr id="dispatch-head"></tr></thead>
           <tbody id="dispatch-body"></tbody>
         </table>
       </div>
+      <p class="table-note" id="summary-note"></p>
+
+      <!-- #7: Route name bar above tabs -->
+      <div class="route-name-bar" id="route-name-bar"></div>
 
       <div class="tabs-container" id="tabs-container">
         <button class="tab-btn active" data-tab="tab-timetable" onclick="switchTab(event,'tab-timetable')">Vehicle Timetable</button>
         <button class="tab-btn" data-tab="tab-schedules" onclick="switchTab(event,'tab-schedules')">Vehicle Schedules</button>
-        <!-- Loop-only tab -->
         <button class="tab-btn" id="btn-tab-dispatch" data-tab="tab-dispatch" onclick="switchTab(event,'tab-dispatch')">Dispatching Schedule</button>
-        <!-- Non-loop tabs -->
         <button class="tab-btn hidden" id="btn-tab-dispatch-a" data-tab="tab-dispatch-a" onclick="switchTab(event,'tab-dispatch-a')">Dispatch – Terminal A</button>
         <button class="tab-btn hidden" id="btn-tab-dispatch-b" data-tab="tab-dispatch-b" onclick="switchTab(event,'tab-dispatch-b')">Dispatch – Terminal B</button>
       </div>
@@ -208,6 +322,12 @@
         <div style="overflow-x: auto;">
           <table class="dispatch-table" id="unit-schedules-table"></table>
         </div>
+        <!-- #5: Per-unit export -->
+        <div class="export-bar">
+          <span>Export schedule for:</span>
+          <select id="sched-export-unit"></select>
+          <button class="btn-export" onclick="exportUnitSchedule()">⬇ Download CSV</button>
+        </div>
       </div>
 
       <!-- Tab: Dispatching Schedule (Loop) -->
@@ -224,6 +344,10 @@
             </thead>
             <tbody id="dispatch-ledger-body"></tbody>
           </table>
+        </div>
+        <div class="export-bar">
+          <span>Export for dispatcher:</span>
+          <button class="btn-export" onclick="exportLoopDispatch()">⬇ Download CSV</button>
         </div>
       </div>
 
@@ -243,6 +367,10 @@
             <tbody id="dispatch-a-body"></tbody>
           </table>
         </div>
+        <div class="export-bar">
+          <span>Export for Terminal A dispatcher:</span>
+          <button class="btn-export" onclick="exportNonLoopDispatch('A')">⬇ Download CSV</button>
+        </div>
       </div>
 
       <!-- Tab: Dispatch Terminal B (Non-Loop) -->
@@ -261,6 +389,10 @@
             <tbody id="dispatch-b-body"></tbody>
           </table>
         </div>
+        <div class="export-bar">
+          <span>Export for Terminal B dispatcher:</span>
+          <button class="btn-export" onclick="exportNonLoopDispatch('B')">⬇ Download CSV</button>
+        </div>
       </div>
 
     </div><!-- /out-container -->
@@ -275,27 +407,31 @@
 
     <h2>Route Types</h2>
     <ul>
-      <li><strong>Loop Route:</strong> Each unit departs from a single terminal and completes a full circuit back. Roundtrip Time (RT) covers the entire loop. Layover is terminal recovery time added on top.</li>
+      <li><strong>Loop Route:</strong> Each unit departs from a single terminal and completes a full circuit back. Roundtrip Time (RT) covers the entire loop. Layover Time is terminal recovery time added on top.</li>
       <li><strong>Non-Loop Route (A ↔ B):</strong> The route has two terminals. All units are dispatched initially from Terminal A. Terminal B's first departure aligns with the moment the first unit is ready to depart from B after queuing. Separate travel times for A→B and B→A can be defined per period, supporting asymmetric traffic conditions.</li>
     </ul>
 
     <h2>Scheduling Methods</h2>
     <ul>
-      <li><strong>Uniform Trips per Vehicle:</strong> Pre-calculates the maximum number of trips that every unit can complete, constrained by the most-restricted unit (the one with the latest start time). All units are then scheduled for exactly that many trips. Trips may start before and end after the operating period ends. Trips extending past the period end are shown as dashed bars on the timetable.</li>
-      <li><strong>Scheduling based on Turn Around Time:</strong> Units dispatch as long as their departure falls within the operating window and the full trip completes before the period ends. Results in uneven trip counts across the fleet when the operating window is not a clean multiple of cycle time.</li>
+      <li><strong>Uniform Trips per Vehicle:</strong> Each unit first runs independently for the full operating window. Results are then trimmed to the minimum trip count across all units, so every vehicle operates the same number of trips. Overrun trips (departures within the operating window that arrive after end of operation) are still flagged on the timetable.</li>
+      <li><strong>Scheduling based on Turn Around Time:</strong> A unit is assigned a trip only if both its departure and its arrival fall within the operating window. No trip is started if the unit cannot complete it before end of operation. Results in fewer total trips compared to Uniform mode, and may leave some units idle toward the end of the operating period.</li>
     </ul>
 
     <h2>Processes & Formulas</h2>
     <ul>
       <li><strong>Dispatch Interval (Headway):</strong>
         <ul>
-          <li>Loop: <code>(RT + Layover) / N</code></li>
-          <li>Non-Loop: <code>(ttAB + Layover B + ttBA + Layover A) / N</code></li>
+          <li>Loop: <code>(RT + Layover Time) / N</code></li>
+          <li>Non-Loop: <code>(ttAB + Layover Time B + ttBA + Layover Time A) / N</code></li>
         </ul>
-        Period 1 cycle time is used to compute the initial stagger. The summary table shows the implied headway for each period.
+        Period 1 cycle time is used to compute the initial vehicle stagger. The summary table shows the implied (planned) headway for each period.
       </li>
-      <li><strong>Non-Loop Offset:</strong> Terminal B's first dispatch = <code>Start of Operation + ttAB (Period 1) + Layover B</code>. Subsequent dispatches from both terminals are spaced by the same headway.</li>
-      <li><strong>Trip Assignment:</strong> For any departure time, the active period determines the travel time used. Trips spanning a period boundary use the departure period's travel time for the entire leg.</li>
+      <li><strong>Planned Interval vs. Realized Avg Headway:</strong> Planned Interval is the formula-based result assuming perfectly uniform vehicle spacing. Realized Avg Headway is the mean gap between consecutive actual departures, measured directly from simulation output. These diverge when cycle times differ across periods, which is the typical case.</li>
+      <li><strong>Min Fleet (Target):</strong> The minimum number of vehicles needed to achieve the period's target headway, computed as <code>⌈Cycle Time / Target Headway⌉</code>. If this exceeds the deployed fleet, the Service Status column flags the shortfall.</li>
+      <li><strong>Overrun Trips:</strong> A trip is classified as an overrun when its departure falls within the operating window but its scheduled arrival is after the end of operation. In Uniform Trips mode, overrun trips are expected and intentional — they represent the last trip of units still in service at the close of the operating day. Overrun trips are shown as dashed bars on the Vehicle Timetable and counted in the Overrun Trips metric.</li>
+      <li><strong>Peak PPHPD (Service Capacity):</strong> The theoretical maximum number of passengers the service can carry per hour per direction, computed as <code>(60 / Peak Realized Headway) × Seating Capacity</code>. The peak period is identified as the one with the lowest realized headway. This reflects service supply only — actual ridership is not modeled.</li>
+      <li><strong>Non-Loop Offset:</strong> Terminal B's first dispatch = <code>Start of Operation + ttAB (Period 1) + Layover Time B</code>. Subsequent dispatches from both terminals are spaced by the same headway.</li>
+      <li><strong>Trip Assignment:</strong> For any departure time, the active period determines the travel time used for the entire leg. Trips spanning a period boundary use the departure period's travel time only.</li>
     </ul>
 
     <h2>Key Assumptions</h2>
@@ -310,36 +446,69 @@
       <li><strong>Stochasticity:</strong> Real-world variance (boarding delays, traffic lights) leading to bus bunching is not modeled.</li>
       <li><strong>Crew Scheduling:</strong> Driver shifts, union constraints, and meal breaks are not mapped against vehicle blocks.</li>
       <li><strong>Cross-Period Legs:</strong> A leg's travel time is determined solely by the period active at departure. No interpolation across period transitions.</li>
+      <li><strong>No Demand Modeling:</strong> Passenger load and ridership are not modeled. Peak PPHPD reflects theoretical service capacity, not actual passenger volume.</li>
     </ul>
   </section>
 
   <!-- Changelog -->
   <section>
     <h1>Changelog</h1>
-    <ul>
-      <li><strong>2026-04-09:</strong> Added Uniform Trips per Vehicle scheduling method (pre-calculates target trip count; trips may extend past operating period end, shown as dashed bars). Added full Non-Loop Route mode: separate A→B and B→A travel times per period, per-terminal dispatch schedules (Terminal A and Terminal B tabs), directional vehicle schedule columns (A→B Dep/Arr + B→A Dep/Arr per round trip). Moved Turn Around Time scheduling to selectable option. Added Layover at Terminal B input. Updated About section.</li>
-      <li><strong>2026-04-08:</strong> Updated branding to Blue (#335fb8) and Red (#ce1127). Added "Interval" column to Dispatching Schedule. Fixed overlapping trips by forcing departure times to respect prior trip ends.</li>
-      <li><strong>2026-04-08 (Fixed Layover):</strong> Fixed zero-layover bug. Added explicit Layover / Recovery Time input. Corrected headway formula to <code>(RT + Layover) / N</code>. Exposed Cycle Time columns.</li>
-      <li><strong>2026-04-08 (UI Update):</strong> Removed section numbers. Added toast notification. Bound trip coloring to periods. Created 3-tab output system.</li>
-      <li><strong>v1.1.0:</strong> Added inputs for units, RT, and Speed. Added end of operation output.</li>
-      <li><strong>v1.0.0:</strong> Initial deterministic timeline visualization.</li>
-    </ul>
+
+    <button class="cl-toggle open" onclick="toggleCL(this)">2026-04-10 (v16) <span class="cl-arrow">▼</span></button>
+    <div class="cl-body open">
+      <ul>
+        <li>Added <strong>Route Length</strong> input: Loop Length (km) for loop routes; Route Length A→B and B→A (km) for non-loop routes. Inputs are optional and toggle with route type.</li>
+        <li>Added <strong>Km Run per Unit</strong> and <strong>Total Km Run / Day</strong> output metrics. Visible only when Uniform Trips mode is selected and a route length is provided.</li>
+        <li>Restored <strong>Uniform Trips mode</strong> cap: all units are trimmed to the minimum trip count across the fleet, ensuring every vehicle operates the same number of trips.</li>
+        <li>Rounded decimal values in the <strong>Interval</strong> column of the Dispatching Schedule (on-screen and CSV).</li>
+        <li>Simplified layover labels to <strong>Layover Time</strong> (loop) and <strong>Layover Time at A / B</strong> (non-loop).</li>
+        <li>Changed changelog entries to <strong>toggle buttons</strong> per date.</li>
+        <li>Changed defaults: <strong>Seating Capacity</strong> to 22; operating periods to a single <strong>14-hour period</strong>.</li>
+      </ul>
+    </div>
+
+    <button class="cl-toggle" onclick="toggleCL(this)">2026-04-09 <span class="cl-arrow">▼</span></button>
+    <div class="cl-body">
+      <ul>
+        <li>Added Input Validation: Run now validates all inputs before executing; errors block the simulation, warnings (e.g., cycle time exceeding period duration) show but allow continuation.</li>
+        <li>Added Realized Headway: Summary table now shows Planned Interval (formula) and Realized Avg Headway (measured from simulation output) side by side.</li>
+        <li>Added Fleet Sufficiency: Summary table shows Min Fleet needed for the target and a per-period status flag.</li>
+        <li>Added CSV Export: Each dispatch tab has a Download CSV button. Loop exports a single file; Non-Loop exports per-terminal files.</li>
+        <li>Added Overrun Trips count to the metrics panel.</li>
+        <li>Non-loop now reports Last Arrival at A and Last Arrival at B as separate metrics.</li>
+        <li>Added Uniform Trips per Vehicle scheduling method. Added full Non-Loop Route mode with separate A→B and B→A travel times per period and per-terminal dispatch schedules. Moved Turn Around Time scheduling to a selectable option. Added Layover Time at B input.</li>
+      </ul>
+    </div>
+
+    <button class="cl-toggle" onclick="toggleCL(this)">2026-04-08 <span class="cl-arrow">▼</span></button>
+    <div class="cl-body">
+      <ul>
+        <li>Updated branding to Blue (#335fb8) and Red (#ce1127).</li>
+        <li>Added Interval column to Dispatching Schedule.</li>
+        <li>Fixed overlapping trips by forcing departure times to respect prior trip ends.</li>
+        <li>Fixed zero-layover bug. Added explicit Layover Time input. Corrected headway formula to <code>(RT + Layover) / N</code>. Exposed Cycle Time columns.</li>
+        <li>Removed section numbers. Added toast notification. Bound trip coloring to periods. Created 3-tab output system.</li>
+        <li>Initial deterministic timeline visualization with inputs for units, roundtrip time, and speed.</li>
+      </ul>
+    </div>
   </section>
 </div>
 
 <div id="toast" class="toast">Simulation Successfully Executed!</div>
 
 <script>
-// ─── State ───────────────────────────────────────────────────────────────────
+// ─── State ────────────────────────────────────────────────────────────────────
+// #6: targetHwMin moved to per-period
 let periods = [
-  { id: 1, durationHr: 4,  rtHr: 2.0,  ttABHr: 1.0,  ttBAHr: 1.0  },
-  { id: 2, durationHr: 6,  rtHr: 1.5,  ttABHr: 0.75, ttBAHr: 0.75 },
-  { id: 3, durationHr: 4,  rtHr: 2.5,  ttABHr: 1.25, ttBAHr: 1.25 }
+  { id: 1, durationHr: 14, rtHr: 2.0,  ttABHr: 1.0,  ttBAHr: 1.0,  targetHwMin: 20 }
 ];
+
+let lastTrips = [], lastLegs = [], lastPbs = [];
+let lastUnits = 0;
 
 const COLORS = ['#335fb8','#ce1127','#b45309','#6d28d9','#0f766e','#1d4ed8','#be123c'];
 
-// ─── Utilities ───────────────────────────────────────────────────────────────
+// ─── Utilities ────────────────────────────────────────────────────────────────
 function fmtAMPM(min) {
   const totalMin = Math.round(min);
   const h = Math.floor(totalMin / 60) % 24;
@@ -364,14 +533,201 @@ function switchTab(evt, tabId) {
 
 function getType()   { return document.getElementById('in-type').value; }
 function getMethod() { return document.getElementById('in-method').value; }
+function routeSlug() { return (document.getElementById('in-name').value || 'Route').replace(/\s+/g, '_'); }
 
-// ─── UI / Period Management ───────────────────────────────────────────────────
+// ─── Validation ───────────────────────────────────────────────────────────────
+function validateInputs() {
+  const errors = [], warnings = [];
+  const type = getType();
+
+  const units = parseInt(document.getElementById('in-units').value);
+  if (!units || units < 1) errors.push('Number of Units must be at least 1.');
+
+  const capacity = parseInt(document.getElementById('in-capacity').value);
+  if (!capacity || capacity < 1) errors.push('Seating Capacity must be at least 1.');
+
+  const layoverA = parseFloat(document.getElementById('in-layover').value);
+  if (isNaN(layoverA) || layoverA < 0) errors.push('Layover Time at A cannot be negative.');
+
+  if (type === 'non-loop') {
+    const layoverB = parseFloat(document.getElementById('in-layover-b').value);
+    if (isNaN(layoverB) || layoverB < 0) errors.push('Layover Time at B cannot be negative.');
+  }
+
+  if (periods.length === 0) {
+    errors.push('At least one operating period is required.');
+    return { errors, warnings };
+  }
+
+  const lA = isNaN(layoverA) ? 0 : layoverA;
+  const lB = type === 'non-loop' ? (parseFloat(document.getElementById('in-layover-b').value) || 0) : 0;
+
+  let totalDur = 0;
+  periods.forEach((p, i) => {
+    const label = `Period ${i + 1}`;
+    if (!p.durationHr || p.durationHr <= 0) {
+      errors.push(`${label}: Duration must be greater than 0.`);
+    } else {
+      totalDur += p.durationHr;
+    }
+    // #6: validate per-period target hw
+    if (!p.targetHwMin || p.targetHwMin < 1) {
+      errors.push(`${label}: Target Headway must be at least 1 minute.`);
+    }
+    if (type === 'loop') {
+      if (!p.rtHr || p.rtHr <= 0) {
+        errors.push(`${label}: Roundtrip time must be greater than 0.`);
+      } else if (p.durationHr > 0) {
+        const cycleMin = p.rtHr * 60 + lA;
+        if (cycleMin > p.durationHr * 60) {
+          warnings.push(`${label}: Cycle time (${Math.round(cycleMin)} min) exceeds period duration. With TAT scheduling, no trips will complete in this period.`);
+        }
+      }
+    } else {
+      if (!p.ttABHr || p.ttABHr <= 0) errors.push(`${label}: Travel A→B must be greater than 0.`);
+      if (!p.ttBAHr || p.ttBAHr <= 0) errors.push(`${label}: Travel B→A must be greater than 0.`);
+      if (p.ttABHr > 0 && p.ttBAHr > 0 && p.durationHr > 0) {
+        const cycleMin = p.ttABHr * 60 + lB + p.ttBAHr * 60 + lA;
+        if (cycleMin > p.durationHr * 60) {
+          warnings.push(`${label}: Cycle time (${Math.round(cycleMin)} min) exceeds period duration. With TAT scheduling, no trips will complete in this period.`);
+        }
+      }
+    }
+  });
+
+  if (totalDur <= 0) errors.push('Total operating duration must be greater than 0.');
+  return { errors, warnings };
+}
+
+// ─── Realized Headway ─────────────────────────────────────────────────────────
+function computeRealizedHw(departures) {
+  if (!departures || departures.length < 2) return null;
+  const sorted = [...departures].sort((a, b) => a - b);
+  const gaps = [];
+  for (let i = 1; i < sorted.length; i++) gaps.push(sorted[i] - sorted[i - 1]);
+  const sum = gaps.reduce((a, b) => a + b, 0);
+  return { avg: Math.round(sum / gaps.length), min: Math.round(Math.min(...gaps)), max: Math.round(Math.max(...gaps)) };
+}
+
+function fleetNeeded(cycleMin, targetHwMin) {
+  if (!targetHwMin || targetHwMin <= 0) return null;
+  return Math.ceil(cycleMin / targetHwMin);
+}
+
+// ─── PPHPD ────────────────────────────────────────────────────────────────────
+// #10: Peak PPHPD = (60 / peakHw) * capacity, where peakHw = min realized avg headway
+function computePeakPPHPD(realizedHws, capacity) {
+  if (!capacity || capacity <= 0) return null;
+  const valid = realizedHws.filter(hw => hw && hw.avg > 0);
+  if (!valid.length) return null;
+  const peakHw = Math.min(...valid.map(hw => hw.avg));
+  return Math.round((60 / peakHw) * capacity);
+}
+
+// ─── CSV Export ───────────────────────────────────────────────────────────────
+function downloadCSV(rows, filename) {
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportLoopDispatch() {
+  if (!lastTrips.length) return;
+  const rows = [['Departure Time', 'Interval (min)', 'Unit ID', 'Operating Period']];
+  const sorted = [...lastTrips].sort((a, b) => a.start - b.start);
+  let prev = null;
+  sorted.forEach(tr => {
+    const gap = prev === null ? '' : String(Math.round(tr.start - prev));
+    prev = tr.start;
+    rows.push([fmtAMPM(tr.start), gap, `Unit ${String(tr.vId + 1).padStart(2, '0')}`, `Period ${tr.periodIdx + 1}`]);
+  });
+  downloadCSV(rows, `${routeSlug()}_Dispatch.csv`);
+}
+
+function exportNonLoopDispatch(terminal) {
+  if (!lastLegs.length) return;
+  const dir = terminal === 'A' ? 'AB' : 'BA';
+  const dest = terminal === 'A' ? 'B' : 'A';
+  const rows = [[`Depart Terminal ${terminal}`, 'Interval (min)', 'Unit ID', `Est. Arrive Terminal ${dest}`, 'Operating Period']];
+  const sorted = lastLegs.filter(l => l.dir === dir).sort((a, b) => a.start - b.start);
+  let prev = null;
+  sorted.forEach(leg => {
+    const gap = prev === null ? '' : String(Math.round(leg.start - prev));
+    prev = leg.start;
+    rows.push([fmtAMPM(leg.start), gap, `Unit ${String(leg.vId + 1).padStart(2, '0')}`, fmtAMPM(leg.end), `Period ${leg.periodIdx + 1}`]);
+  });
+  downloadCSV(rows, `${routeSlug()}_Dispatch_Terminal${terminal}.csv`);
+}
+
+// #5: Per-unit schedule export
+function exportUnitSchedule() {
+  const sel = document.getElementById('sched-export-unit');
+  const val = sel.value;
+  const type = getType();
+  const slug = routeSlug();
+
+  let unitIds = [];
+  if (val === 'all') {
+    unitIds = Array.from({ length: lastUnits }, (_, i) => i);
+  } else {
+    unitIds = [parseInt(val)];
+  }
+
+  if (type === 'loop') {
+    if (!lastTrips.length) return;
+    // Determine max trips across selected units
+    const maxTrips = Math.max(...unitIds.map(u => lastTrips.filter(t => t.vId === u).length), 0);
+    const header = ['Unit'];
+    for (let i = 1; i <= maxTrips; i++) { header.push(`Trip ${i} Start`, `Trip ${i} End`); }
+    const rows = [header];
+    unitIds.forEach(u => {
+      const ut = lastTrips.filter(t => t.vId === u).sort((a, b) => a.start - b.start);
+      const row = [`Unit ${String(u + 1).padStart(2, '0')}`];
+      for (let i = 0; i < maxTrips; i++) {
+        if (i < ut.length) { row.push(fmtAMPM(ut[i].start), fmtAMPM(ut[i].end)); }
+        else { row.push('', ''); }
+      }
+      rows.push(row);
+    });
+    const label = val === 'all' ? 'All_Units' : `Unit_${String(parseInt(val) + 1).padStart(2, '0')}`;
+    downloadCSV(rows, `${slug}_${label}_Schedule.csv`);
+  } else {
+    if (!lastLegs.length) return;
+    const maxRTs = Math.max(...unitIds.map(u => lastLegs.filter(l => l.vId === u && l.dir === 'AB').length), 0);
+    const header = ['Unit'];
+    for (let i = 1; i <= maxRTs; i++) { header.push(`RT${i} A→B Dep`, `RT${i} A→B Arr`, `RT${i} B→A Dep`, `RT${i} B→A Arr`); }
+    const rows = [header];
+    unitIds.forEach(u => {
+      const row = [`Unit ${String(u + 1).padStart(2, '0')}`];
+      for (let i = 0; i < maxRTs; i++) {
+        const ab = lastLegs.find(l => l.vId === u && l.dir === 'AB' && l.rtIdx === i);
+        const ba = lastLegs.find(l => l.vId === u && l.dir === 'BA' && l.rtIdx === i);
+        row.push(ab ? fmtAMPM(ab.start) : '', ab ? fmtAMPM(ab.end) : '', ba ? fmtAMPM(ba.start) : '', ba ? fmtAMPM(ba.end) : '');
+      }
+      rows.push(row);
+    });
+    const label = val === 'all' ? 'All_Units' : `Unit_${String(parseInt(val) + 1).padStart(2, '0')}`;
+    downloadCSV(rows, `${slug}_${label}_Schedule.csv`);
+  }
+}
+
+// ─── Changelog Toggles ────────────────────────────────────────────────────────
+function toggleCL(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+
+// ─── Period UI ────────────────────────────────────────────────────────────────
 function handleRouteTypeChange() {
   const nl = getType() === 'non-loop';
   document.getElementById('wrap-layover-b').classList.toggle('hidden', !nl);
-  document.getElementById('lbl-layover-a').textContent = nl
-    ? 'Layover at Terminal A (min)'
-    : 'Layover / Recovery Time (min)';
+  document.getElementById('lbl-layover-a').textContent = nl ? 'Layover Time at A (min)' : 'Layover Time (min)';
+  document.getElementById('wrap-loop-length').classList.toggle('hidden', nl);
+  document.getElementById('wrap-length-ab').classList.toggle('hidden', !nl);
+  document.getElementById('wrap-length-ba').classList.toggle('hidden', !nl);
   renderPeriods();
 }
 
@@ -390,6 +746,8 @@ function renderPeriods() {
             <input type="number" step="0.1" min="0.1" value="${p.ttABHr}" onchange="updateP(${i},'ttAB',this.value)"></div>
           <div class="fld"><label>Travel B→A (hrs)</label>
             <input type="number" step="0.1" min="0.1" value="${p.ttBAHr}" onchange="updateP(${i},'ttBA',this.value)"></div>
+          <div class="fld"><label>Target Hw (min)</label>
+            <input type="number" step="1" min="1" value="${p.targetHwMin}" onchange="updateP(${i},'targetHw',this.value)"></div>
         </div>`;
     } else {
       container.innerHTML += `
@@ -399,6 +757,8 @@ function renderPeriods() {
             <input type="number" step="0.5" min="0.5" value="${p.durationHr}" onchange="updateP(${i},'dur',this.value)"></div>
           <div class="fld"><label>Roundtrip (hrs)</label>
             <input type="number" step="0.1" min="0.1" value="${p.rtHr}" onchange="updateP(${i},'rt',this.value)"></div>
+          <div class="fld"><label>Target Hw (min)</label>
+            <input type="number" step="1" min="1" value="${p.targetHwMin}" onchange="updateP(${i},'targetHw',this.value)"></div>
         </div>`;
     }
   });
@@ -406,14 +766,15 @@ function renderPeriods() {
 
 function updateP(i, field, val) {
   const v = parseFloat(val) || 0;
-  if (field === 'dur')  periods[i].durationHr = v;
-  if (field === 'rt')   periods[i].rtHr = v;
-  if (field === 'ttAB') periods[i].ttABHr = v;
-  if (field === 'ttBA') periods[i].ttBAHr = v;
+  if (field === 'dur')      periods[i].durationHr  = v;
+  if (field === 'rt')       periods[i].rtHr        = v;
+  if (field === 'ttAB')     periods[i].ttABHr      = v;
+  if (field === 'ttBA')     periods[i].ttBAHr      = v;
+  if (field === 'targetHw') periods[i].targetHwMin = v;
 }
 
 function addPeriod() {
-  periods.push({ id: Date.now(), durationHr:4, rtHr:2.0, ttABHr:1.0, ttBAHr:1.0 });
+  periods.push({ id: Date.now(), durationHr: 4, rtHr: 2.0, ttABHr: 1.0, ttBAHr: 1.0, targetHwMin: 20 });
   renderPeriods();
 }
 
@@ -434,7 +795,8 @@ function buildPBoundaries(startMin) {
       color: COLORS[i % COLORS.length],
       ttAB: nl ? p.ttABHr * 60 : p.rtHr * 60,
       ttBA: nl ? p.ttBAHr * 60 : 0,
-      rt:   nl ? (p.ttABHr + p.ttBAHr) * 60 : p.rtHr * 60
+      rt:   nl ? (p.ttABHr + p.ttBAHr) * 60 : p.rtHr * 60,
+      targetHwMin: p.targetHwMin || 20   // #6: per-period target
     };
     cur += durMin;
     return pb;
@@ -446,155 +808,231 @@ function periodAt(t, pbs) {
 }
 
 // ─── Simulation: Loop ─────────────────────────────────────────────────────────
-function calcTargetLoop(starts, pbs, layover, endOp) {
-  let min = Infinity;
-  starts.forEach(s => {
-    let t = s, n = 0;
-    while (t < endOp && n < 1000) {
-      t += periodAt(t, pbs).rt + layover;
-      n++;
-    }
-    min = Math.min(min, n);
-  });
-  return min === Infinity ? 0 : min;
-}
-
+// Uniform mode — each unit runs independently, then all are capped to the minimum
+//   trip count so every unit does the same number of trips (uniform).
+//   Overrun trips are still flagged if a trip ends past endOp.
+// TAT mode — unit only takes a trip if it will arrive back before endOp.
 function simLoop(units, startMin, pbs, layover, endOp, method) {
   const hw = Math.round((pbs[0].rt + layover) / units);
-  const starts = Array.from({length: units}, (_, u) => startMin + u * hw);
-  const target = method === 'uniform' ? calcTargetLoop(starts, pbs, layover, endOp) : Infinity;
-
+  const starts = Array.from({ length: units }, (_, u) => startMin + u * hw);
   const trips = [];
   for (let u = 0; u < units; u++) {
-    let t = starts[u], n = 0;
-    while (true) {
-      if (method === 'tat'     && t >= endOp)  break;
-      if (method === 'uniform' && n >= target)  break;
+    let t = starts[u];
+    while (t < endOp) {
       const pb  = periodAt(t, pbs);
       const end = t + pb.rt;
       if (method === 'tat' && end > endOp) break;
-      trips.push({ vId:u, start:t, end, periodIdx:pb.idx, overrun: end > endOp });
+      trips.push({ vId: u, start: t, end, periodIdx: pb.idx, overrun: end > endOp });
       t = end + layover;
-      n++;
     }
+  }
+  if (method === 'uniform') {
+    const perUnit = Array.from({ length: units }, (_, u) =>
+      trips.filter(t => t.vId === u).sort((a, b) => a.start - b.start));
+    const minTrips = Math.min(...perUnit.map(u => u.length));
+    return { trips: perUnit.flatMap(u => u.slice(0, minTrips)), hw };
   }
   return { trips, hw };
 }
 
 // ─── Simulation: Non-Loop ─────────────────────────────────────────────────────
-function calcTargetNonLoop(starts, pbs, lA, lB, endOp) {
-  let min = Infinity;
-  starts.forEach(s => {
-    let t = s, n = 0;
-    while (t < endOp && n < 1000) {
-      const ab = periodAt(t, pbs);
-      const arrB = t + ab.ttAB;
-      const ba = periodAt(arrB + lB, pbs);
-      t = arrB + lB + ba.ttBA + lA;
-      n++;
-    }
-    min = Math.min(min, n);
-  });
-  return min === Infinity ? 0 : min;
-}
-
 function simNonLoop(units, startMin, pbs, lA, lB, endOp, method) {
   const p1 = pbs[0];
   const cycle1 = p1.ttAB + lB + p1.ttBA + lA;
   const hw = cycle1 / units;
-  const starts = Array.from({length: units}, (_, u) => startMin + Math.round(u * hw));
-  const target = method === 'uniform' ? calcTargetNonLoop(starts, pbs, lA, lB, endOp) : Infinity;
-
+  const starts = Array.from({ length: units }, (_, u) => startMin + Math.round(u * hw));
   const legs = [];
   for (let u = 0; u < units; u++) {
     let t = starts[u], rt = 0;
-    while (true) {
-      if (method === 'tat'     && t >= endOp) break;
-      if (method === 'uniform' && rt >= target) break;
-
+    while (t < endOp) {
       const abPb = periodAt(t, pbs);
       const arrB = t + abPb.ttAB;
       const depB = arrB + lB;
       const baPb = periodAt(depB, pbs);
       const arrA = depB + baPb.ttBA;
-
-      // TAT: full round trip must arrive back at A before endOp
       if (method === 'tat' && arrA > endOp) break;
-
-      legs.push({ vId:u, dir:'AB', start:t,    end:arrB, periodIdx:abPb.idx, rtIdx:rt, overrun:arrB>endOp });
-      legs.push({ vId:u, dir:'BA', start:depB, end:arrA, periodIdx:baPb.idx, rtIdx:rt, overrun:arrA>endOp });
-
+      legs.push({ vId: u, dir: 'AB', start: t,    end: arrB, periodIdx: abPb.idx, rtIdx: rt, overrun: arrB > endOp });
+      legs.push({ vId: u, dir: 'BA', start: depB, end: arrA, periodIdx: baPb.idx, rtIdx: rt, overrun: arrA > endOp });
       t = arrA + lA;
       rt++;
     }
+  }
+  if (method === 'uniform') {
+    const minRTs = Math.min(...Array.from({ length: units }, (_, u) =>
+      legs.filter(l => l.vId === u && l.dir === 'AB').length));
+    return { legs: legs.filter(l => l.rtIdx < minRTs), hw, p1 };
   }
   return { legs, hw, p1 };
 }
 
 // ─── Main Run ─────────────────────────────────────────────────────────────────
 function runSimulation() {
+  const { errors, warnings } = validateInputs();
+  const valBox = document.getElementById('val-box');
+  valBox.innerHTML = '';
+  valBox.className = 'val-box';
+
+  if (errors.length > 0) {
+    valBox.className = 'val-box errors';
+    valBox.style.display = 'block';
+    valBox.innerHTML = '<strong>Cannot run simulation — fix the following:</strong><ul>' +
+      errors.map(e => `<li>${e}</li>`).join('') + '</ul>';
+    return;
+  }
+  if (warnings.length > 0) {
+    valBox.className = 'val-box warnings';
+    valBox.style.display = 'block';
+    valBox.innerHTML = '<strong>Heads up before reviewing results:</strong><ul>' +
+      warnings.map(w => `<li>${w}</li>`).join('') + '</ul>';
+  } else {
+    valBox.style.display = 'none';
+  }
+
   document.getElementById('out-container').style.display = 'block';
 
-  const type    = getType();
-  const method  = getMethod();
-  const units   = parseInt(document.getElementById('in-units').value)    || 1;
-  const lA      = parseInt(document.getElementById('in-layover').value)  || 0;
-  const lB      = parseInt(document.getElementById('in-layover-b').value)|| 0;
-  const [sH,sM] = (document.getElementById('in-start').value || '05:00').split(':').map(Number);
+  const type     = getType();
+  const method   = getMethod();
+  const units    = parseInt(document.getElementById('in-units').value)    || 1;
+  const capacity = parseInt(document.getElementById('in-capacity').value) || 0;
+  const lA       = parseInt(document.getElementById('in-layover').value)  || 0;
+  const lB       = parseInt(document.getElementById('in-layover-b').value)|| 0;
+  const [sH, sM] = (document.getElementById('in-start').value || '05:00').split(':').map(Number);
   const startMin = sH * 60 + sM;
   const totalDur = periods.reduce((s, p) => s + p.durationHr * 60, 0);
   const endOp    = startMin + totalDur;
   const pbs      = buildPBoundaries(startMin);
 
+  lastUnits = units;
+
+  // #7: Route name bar
+  document.getElementById('route-name-bar').textContent =
+    document.getElementById('in-name').value || 'Route';
+
+  // #5: Populate unit selector
+  const sel = document.getElementById('sched-export-unit');
+  sel.innerHTML = '<option value="all">All Units</option>' +
+    Array.from({ length: units }, (_, u) =>
+      `<option value="${u}">Unit ${String(u + 1).padStart(2, '0')}</option>`
+    ).join('');
+
   if (type === 'loop') {
-    runLoop(units, startMin, pbs, lA, endOp, totalDur, method);
+    runLoop(units, startMin, pbs, lA, endOp, totalDur, method, capacity);
   } else {
-    runNonLoop(units, startMin, pbs, lA, lB, endOp, totalDur, method);
+    runNonLoop(units, startMin, pbs, lA, lB, endOp, totalDur, method, capacity);
   }
   showToast();
 }
 
 // ─── Run Loop ─────────────────────────────────────────────────────────────────
-function runLoop(units, startMin, pbs, lA, endOp, totalDur, method) {
-  // Summary table
+function runLoop(units, startMin, pbs, lA, endOp, totalDur, method, capacity) {
+  const { trips } = simLoop(units, startMin, pbs, lA, endOp, method);
+  lastTrips = trips; lastLegs = []; lastPbs = pbs;
+
+  // Realized hw per period
+  const realizedHw = pbs.map((pb, i) => {
+    const deps = trips.filter(t => t.periodIdx === i).map(t => t.start);
+    return computeRealizedHw(deps);
+  });
+
+  // Summary table with #6 per-period target, #8 Service Status header
   document.getElementById('dispatch-head').innerHTML =
     '<th>Period</th><th>Time Window</th><th>Duration</th>' +
-    '<th>Roundtrip Time</th><th>Layover</th><th>Cycle Time</th><th>Dispatch Interval</th>';
+    '<th>Roundtrip</th><th>Layover</th><th>Cycle</th>' +
+    '<th>Planned Interval</th>' +
+    '<th class="realized-col">Realized Avg Hw</th>' +
+    '<th class="fleet-col">Min Fleet<br><small style="font-weight:400">(per target)</small></th>' +
+    '<th class="status-col">Service Status</th>';
+
   const tbody = document.getElementById('dispatch-body');
   tbody.innerHTML = '';
   pbs.forEach((pb, i) => {
-    const interval = Math.round((pb.rt + lA) / units);
+    const cycle   = pb.rt + lA;
+    const planned = Math.round(cycle / units);
+    const rHw     = realizedHw[i];
+    const rVal    = rHw ? rHw.avg : null;
+    const minF    = fleetNeeded(cycle, pb.targetHwMin);
+    const rHwStr  = rHw ? `${rHw.avg} min` : '<span style="color:var(--text-sec)">–</span>';
+
+    let badge = '';
+    if (rVal !== null && minF !== null) {
+      if (rVal <= pb.targetHwMin) {
+        badge = `<span class="status-ok">✓ Meets target</span>`;
+      } else {
+        const extra = minF - units;
+        badge = extra > 0
+          ? `<span class="status-warn">⚠ +${extra} unit${extra > 1 ? 's' : ''} needed</span>`
+          : `<span class="status-warn">⚠ Irregular spacing</span>`;
+      }
+    }
+
     tbody.innerHTML += `<tr>
-      <td><span class="period-badge" style="background:${pb.color}"></span>Period ${i+1}</td>
+      <td><span class="period-badge" style="background:${pb.color}"></span>Period ${i + 1}</td>
       <td><strong>${fmtAMPM(pb.start)} – ${fmtAMPM(pb.end)}</strong></td>
       <td>${periods[i].durationHr} hrs</td>
       <td>${periods[i].rtHr} hrs</td>
       <td>${lA} min</td>
-      <td>${pb.rt + lA} min</td>
-      <td><strong>${interval} min</strong></td>
+      <td>${cycle} min</td>
+      <td>${planned} min</td>
+      <td style="background:#f5f7ff">${rHwStr}</td>
+      <td style="background:#f0fdf4">${minF !== null ? minF : '–'} <small style="color:var(--text-sec)">(tgt: ${pb.targetHwMin} min)</small></td>
+      <td style="background:#faf5ff">${badge}</td>
     </tr>`;
   });
 
-  const { trips } = simLoop(units, startMin, pbs, lA, endOp, method);
+  document.getElementById('summary-note').innerHTML =
+    '<strong>Planned Interval</strong> = Cycle ÷ N (formula). ' +
+    '<strong>Realized Avg Hw</strong> = mean gap between consecutive actual departures from simulation output. ' +
+    'These diverge when cycle times change across periods.';
 
   // Metrics
   const counts = Array(units).fill(0);
   trips.forEach(t => counts[t.vId]++);
   const minC = Math.min(...counts), maxC = Math.max(...counts);
-  const lastEnd = trips.length ? Math.max(...trips.map(t => t.end)) : 0;
+  const overrunCount = trips.filter(t => t.overrun).length;
+  const lastEnd      = trips.length ? Math.max(...trips.map(t => t.end)) : 0;
+  // #1: Last trip start (loop has one terminal)
+  const lastStart    = trips.length ? Math.max(...trips.map(t => t.start)) : 0;
+
   document.getElementById('m-total-lbl').textContent = 'Total Daily Trips';
   document.getElementById('m-tpv-lbl').textContent   = 'Trips / Vehicle';
-  document.getElementById('m-total').textContent = trips.length;
-  document.getElementById('m-tpv').textContent   = minC === maxC ? minC : `${minC}–${maxC}`;
-  document.getElementById('m-end').textContent   = lastEnd ? fmtAMPM(lastEnd) : '--:--';
+  document.getElementById('m-total').textContent     = trips.length;
+  document.getElementById('m-tpv').textContent       = minC === maxC ? minC : `${minC}–${maxC}`;
+  document.getElementById('m-last-start').textContent = lastStart ? fmtAMPM(lastStart) : '--:--';
+  document.getElementById('m-end').textContent        = lastEnd   ? fmtAMPM(lastEnd)   : '--:--';
+  document.getElementById('m-overrun').textContent    = overrunCount;
+  setOverrunStyle(overrunCount > 0);
 
+  // #10: PPHPD
+  const pphpd = computePeakPPHPD(realizedHw, capacity);
+  document.getElementById('m-pphpd').textContent = pphpd !== null ? pphpd.toLocaleString() : '–';
+
+  // Km Run — Uniform mode + route length provided
+  if (method === 'uniform') {
+    const loopLen = parseFloat(document.getElementById('in-loop-length').value);
+    if (loopLen > 0) {
+      const tripsPerUnit = trips.length / units;
+      const kmUnit  = +(tripsPerUnit * loopLen).toFixed(1);
+      const kmTotal = +(kmUnit * units).toFixed(1);
+      document.getElementById('m-km-unit').textContent  = kmUnit.toLocaleString() + ' km';
+      document.getElementById('m-km-total').textContent = kmTotal.toLocaleString() + ' km';
+      show('wrap-m-km-unit'); show('wrap-m-km-total');
+    } else {
+      hide('wrap-m-km-unit'); hide('wrap-m-km-total');
+    }
+  } else {
+    hide('wrap-m-km-unit'); hide('wrap-m-km-total');
+  }
+
+  // Metric visibility – loop
+  show('wrap-m-last-start'); hide('wrap-m-last-start-a'); hide('wrap-m-last-start-b');
+  show('wrap-m-end'); hide('wrap-m-end-a'); hide('wrap-m-end-b');
+  show('wrap-m-pphpd'); hide('wrap-m-pphpd-ab'); hide('wrap-m-pphpd-ba');
   // Tabs
   document.getElementById('btn-tab-dispatch').classList.remove('hidden');
   document.getElementById('btn-tab-dispatch-a').classList.add('hidden');
   document.getElementById('btn-tab-dispatch-b').classList.add('hidden');
   resetActiveTab();
 
-  // Renders
   const anyOverrun = trips.some(t => t.overrun);
   document.getElementById('overrun-note').classList.toggle('hidden', !anyOverrun);
   renderMatrix_Loop(units, startMin, totalDur, trips, pbs, endOp);
@@ -603,20 +1041,49 @@ function runLoop(units, startMin, pbs, lA, endOp, totalDur, method) {
 }
 
 // ─── Run Non-Loop ─────────────────────────────────────────────────────────────
-function runNonLoop(units, startMin, pbs, lA, lB, endOp, totalDur, method) {
+function runNonLoop(units, startMin, pbs, lA, lB, endOp, totalDur, method, capacity) {
+  const { legs } = simNonLoop(units, startMin, pbs, lA, lB, endOp, method);
+  lastTrips = []; lastLegs = legs; lastPbs = pbs;
+
+  const realizedHwA = pbs.map((pb, i) => computeRealizedHw(legs.filter(l => l.dir === 'AB' && l.periodIdx === i).map(l => l.start)));
+  const realizedHwB = pbs.map((pb, i) => computeRealizedHw(legs.filter(l => l.dir === 'BA' && l.periodIdx === i).map(l => l.start)));
+
   // Summary table
   document.getElementById('dispatch-head').innerHTML =
     '<th>Period</th><th>Time Window</th><th>Duration</th>' +
     '<th>Travel A→B</th><th>Travel B→A</th>' +
     '<th>Layover A</th><th>Layover B</th>' +
-    '<th>Cycle Time</th><th>Dispatch Interval</th>';
+    '<th>Cycle</th><th>Planned Interval</th>' +
+    '<th class="realized-col">Realized Avg Hw<br><small style="font-weight:400">A / B</small></th>' +
+    '<th class="fleet-col">Min Fleet<br><small style="font-weight:400">(per target)</small></th>' +
+    '<th class="status-col">Service Status</th>';
+
   const tbody = document.getElementById('dispatch-body');
   tbody.innerHTML = '';
   pbs.forEach((pb, i) => {
-    const cycle    = pb.ttAB + lB + pb.ttBA + lA;
-    const interval = Math.round(cycle / units);
+    const cycle   = pb.ttAB + lB + pb.ttBA + lA;
+    const planned = Math.round(cycle / units);
+    const rA = realizedHwA[i], rB = realizedHwB[i];
+    const rHwStr = `${rA ? rA.avg : '–'} / ${rB ? rB.avg : '–'} min`;
+    const minF   = fleetNeeded(cycle, pb.targetHwMin);
+
+    const worst = [rA ? rA.avg : null, rB ? rB.avg : null].filter(v => v !== null);
+    const maxRealized = worst.length ? Math.max(...worst) : null;
+
+    let badge = '';
+    if (maxRealized !== null && minF !== null) {
+      if (maxRealized <= pb.targetHwMin) {
+        badge = `<span class="status-ok">✓ Meets target</span>`;
+      } else {
+        const extra = minF - units;
+        badge = extra > 0
+          ? `<span class="status-warn">⚠ +${extra} unit${extra > 1 ? 's' : ''} needed</span>`
+          : `<span class="status-warn">⚠ Irregular spacing</span>`;
+      }
+    }
+
     tbody.innerHTML += `<tr>
-      <td><span class="period-badge" style="background:${pb.color}"></span>Period ${i+1}</td>
+      <td><span class="period-badge" style="background:${pb.color}"></span>Period ${i + 1}</td>
       <td><strong>${fmtAMPM(pb.start)} – ${fmtAMPM(pb.end)}</strong></td>
       <td>${periods[i].durationHr} hrs</td>
       <td>${periods[i].ttABHr} hrs</td>
@@ -624,22 +1091,72 @@ function runNonLoop(units, startMin, pbs, lA, lB, endOp, totalDur, method) {
       <td>${lA} min</td>
       <td>${lB} min</td>
       <td>${cycle} min</td>
-      <td><strong>${interval} min</strong></td>
+      <td>${planned} min</td>
+      <td style="background:#f5f7ff">${rHwStr}</td>
+      <td style="background:#f0fdf4">${minF !== null ? minF : '–'} <small style="color:var(--text-sec)">(tgt: ${pb.targetHwMin} min)</small></td>
+      <td style="background:#faf5ff">${badge}</td>
     </tr>`;
   });
 
-  const { legs } = simNonLoop(units, startMin, pbs, lA, lB, endOp, method);
+  document.getElementById('summary-note').innerHTML =
+    '<strong>Planned Interval</strong> = Cycle ÷ N (formula). ' +
+    '<strong>Realized Avg Hw A / B</strong> = mean departure gaps at Terminal A (A→B) and Terminal B (B→A) from simulation output.';
 
   // Metrics
   const rtCounts = Array(units).fill(0);
   legs.filter(l => l.dir === 'AB').forEach(l => rtCounts[l.vId]++);
   const minC = Math.min(...rtCounts), maxC = Math.max(...rtCounts);
-  const lastEnd = legs.length ? Math.max(...legs.map(l => l.end)) : 0;
+  const overrunCount = legs.filter(l => l.overrun).length;
+
+  const abLegs = legs.filter(l => l.dir === 'AB');
+  const baLegs = legs.filter(l => l.dir === 'BA');
+  // #1: Last trip starts
+  const lastStartA = abLegs.length ? Math.max(...abLegs.map(l => l.start)) : 0;
+  const lastStartB = baLegs.length ? Math.max(...baLegs.map(l => l.start)) : 0;
+  // Last arrivals
+  const lastArrA = baLegs.length ? Math.max(...baLegs.map(l => l.end)) : 0;
+  const lastArrB = abLegs.length ? Math.max(...abLegs.map(l => l.end)) : 0;
+
   document.getElementById('m-total-lbl').textContent = 'Total Round Trips';
   document.getElementById('m-tpv-lbl').textContent   = 'Round Trips / Vehicle';
-  document.getElementById('m-total').textContent = rtCounts.reduce((a,b) => a+b, 0);
-  document.getElementById('m-tpv').textContent   = minC === maxC ? minC : `${minC}–${maxC}`;
-  document.getElementById('m-end').textContent   = lastEnd ? fmtAMPM(lastEnd) : '--:--';
+  document.getElementById('m-total').textContent     = rtCounts.reduce((a, b) => a + b, 0);
+  document.getElementById('m-tpv').textContent       = minC === maxC ? minC : `${minC}–${maxC}`;
+  document.getElementById('m-last-start-a').textContent = lastStartA ? fmtAMPM(lastStartA) : '--:--';
+  document.getElementById('m-last-start-b').textContent = lastStartB ? fmtAMPM(lastStartB) : '--:--';
+  document.getElementById('m-end-a').textContent     = lastArrA ? fmtAMPM(lastArrA) : '--:--';
+  document.getElementById('m-end-b').textContent     = lastArrB ? fmtAMPM(lastArrB) : '--:--';
+  document.getElementById('m-overrun').textContent   = overrunCount;
+  setOverrunStyle(overrunCount > 0);
+
+  // #10: PPHPD per direction
+  const cap = parseInt(document.getElementById('in-capacity').value) || 0;
+  const pphpdAB = computePeakPPHPD(realizedHwA, cap);
+  const pphpdBA = computePeakPPHPD(realizedHwB, cap);
+  document.getElementById('m-pphpd-ab').textContent = pphpdAB !== null ? pphpdAB.toLocaleString() : '–';
+  document.getElementById('m-pphpd-ba').textContent = pphpdBA !== null ? pphpdBA.toLocaleString() : '–';
+
+  // Km Run — Uniform mode + route lengths provided
+  if (method === 'uniform') {
+    const lenAB = parseFloat(document.getElementById('in-length-ab').value) || 0;
+    const lenBA = parseFloat(document.getElementById('in-length-ba').value) || 0;
+    if (lenAB > 0 || lenBA > 0) {
+      const rtPerUnit  = Math.min(...rtCounts);   // uniform cap ensures all equal
+      const kmUnit     = +(rtPerUnit * (lenAB + lenBA)).toFixed(1);
+      const kmTotal    = +(kmUnit * units).toFixed(1);
+      document.getElementById('m-km-unit').textContent  = kmUnit.toLocaleString() + ' km';
+      document.getElementById('m-km-total').textContent = kmTotal.toLocaleString() + ' km';
+      show('wrap-m-km-unit'); show('wrap-m-km-total');
+    } else {
+      hide('wrap-m-km-unit'); hide('wrap-m-km-total');
+    }
+  } else {
+    hide('wrap-m-km-unit'); hide('wrap-m-km-total');
+  }
+
+  // Metric visibility – non-loop
+  hide('wrap-m-last-start'); show('wrap-m-last-start-a'); show('wrap-m-last-start-b');
+  hide('wrap-m-end'); show('wrap-m-end-a'); show('wrap-m-end-b');
+  hide('wrap-m-pphpd'); show('wrap-m-pphpd-ab'); show('wrap-m-pphpd-ba');
 
   // Tabs
   document.getElementById('btn-tab-dispatch').classList.add('hidden');
@@ -647,7 +1164,6 @@ function runNonLoop(units, startMin, pbs, lA, lB, endOp, totalDur, method) {
   document.getElementById('btn-tab-dispatch-b').classList.remove('hidden');
   resetActiveTab();
 
-  // Renders
   const anyOverrun = legs.some(l => l.overrun);
   document.getElementById('overrun-note').classList.toggle('hidden', !anyOverrun);
   renderMatrix_NonLoop(units, startMin, totalDur, legs, pbs, endOp);
@@ -656,7 +1172,15 @@ function runNonLoop(units, startMin, pbs, lA, lB, endOp, totalDur, method) {
   renderLedger_NonLoop(legs, pbs, 'B');
 }
 
-// ─── Reset active tab ─────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+function setOverrunStyle(hasOverrun) {
+  document.getElementById('m-overrun').className = hasOverrun ? 'metric-val warn' : 'metric-val';
+  document.getElementById('wrap-m-overrun').className = hasOverrun ? 'metric warn-metric' : 'metric';
+}
+
 function resetActiveTab() {
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -664,24 +1188,23 @@ function resetActiveTab() {
   document.querySelector('[data-tab="tab-timetable"]').classList.add('active');
 }
 
-// ─── Render: Matrix (Loop) ───────────────────────────────────────────────────
+// ─── Render: Matrix (Loop) ────────────────────────────────────────────────────
 function renderMatrix_Loop(units, startMin, totalDur, trips, pbs, endOp) {
-  const maxEnd    = trips.length ? Math.max(...trips.map(t => t.end)) : startMin + totalDur;
-  const dispDur   = Math.max(totalDur, maxEnd - startMin) + 30;
-  const TLPX      = Math.max(1000, dispDur * 1.5);
-  const PPM       = TLPX / dispDur;
+  const maxEnd  = trips.length ? Math.max(...trips.map(t => t.end)) : startMin + totalDur;
+  const dispDur = Math.max(totalDur, maxEnd - startMin) + 30;
+  const TLPX    = Math.max(1000, dispDur * 1.5);
+  const PPM     = TLPX / dispDur;
 
   let html = buildTimelineHeader(startMin, dispDur, TLPX, PPM);
   for (let u = 0; u < units; u++) {
     const ut = trips.filter(t => t.vId === u);
     html += `<div class="vrow">
       <div class="rlbl">Unit ${String(u+1).padStart(2,'0')}<span class="sub">${ut.length} trips</span></div>
-      <div class="tla">`;
-    // End-of-operation line
-    html += `<div class="endop-line" style="left:${(endOp-startMin)*PPM}px" title="End of Operation"></div>`;
+      <div class="tla">
+        <div class="endop-line" style="left:${(endOp-startMin)*PPM}px" title="End of Operation"></div>`;
     ut.forEach(tr => {
       const lx = (tr.start - startMin) * PPM;
-      const wx = (tr.end   - tr.start) * PPM;
+      const wx = (tr.end - tr.start) * PPM;
       const col = COLORS[tr.periodIdx % COLORS.length];
       html += `<div class="bar${tr.overrun?' overrun':''}" style="left:${lx}px;width:${wx}px;background:${col};border-color:rgba(0,0,0,0.2);"
         title="Unit ${u+1} | ${fmtAMPM(tr.start)} – ${fmtAMPM(tr.end)}">${fmtAMPM(tr.start)}</div>`;
@@ -691,7 +1214,7 @@ function renderMatrix_Loop(units, startMin, totalDur, trips, pbs, endOp) {
   document.getElementById('matrix').innerHTML = `<div style="min-width:${TLPX+130}px">${html}</div>`;
 }
 
-// ─── Render: Matrix (Non-Loop) ───────────────────────────────────────────────
+// ─── Render: Matrix (Non-Loop) ────────────────────────────────────────────────
 function renderMatrix_NonLoop(units, startMin, totalDur, legs, pbs, endOp) {
   const maxEnd  = legs.length ? Math.max(...legs.map(l => l.end)) : startMin + totalDur;
   const dispDur = Math.max(totalDur, maxEnd - startMin) + 30;
@@ -704,11 +1227,11 @@ function renderMatrix_NonLoop(units, startMin, totalDur, legs, pbs, endOp) {
     const rtCnt = ul.filter(l => l.dir === 'AB').length;
     html += `<div class="vrow">
       <div class="rlbl">Unit ${String(u+1).padStart(2,'0')}<span class="sub">${rtCnt} round trips</span></div>
-      <div class="tla">`;
-    html += `<div class="endop-line" style="left:${(endOp-startMin)*PPM}px" title="End of Operation"></div>`;
+      <div class="tla">
+        <div class="endop-line" style="left:${(endOp-startMin)*PPM}px" title="End of Operation"></div>`;
     ul.forEach(leg => {
       const lx  = (leg.start - startMin) * PPM;
-      const wx  = (leg.end   - leg.start) * PPM;
+      const wx  = (leg.end - leg.start) * PPM;
       const col = COLORS[leg.periodIdx % COLORS.length];
       const lbl = leg.dir === 'AB' ? 'A→B' : 'B→A';
       html += `<div class="bar${leg.dir==='BA'?' ba-leg':''}${leg.overrun?' overrun':''}"
@@ -729,7 +1252,7 @@ function buildTimelineHeader(startMin, dispDur, TLPX, PPM) {
   return html;
 }
 
-// ─── Render: Vehicle Schedules (Loop) ────────────────────────────────────────
+// ─── Render: Vehicle Schedules (Loop) ─────────────────────────────────────────
 function renderSchedules_Loop(units, trips) {
   const counts   = Array(units).fill(0);
   trips.forEach(t => counts[t.vId]++);
@@ -742,7 +1265,7 @@ function renderSchedules_Loop(units, trips) {
   html += '</tr></thead><tbody>';
 
   for (let u = 0; u < units; u++) {
-    const ut = trips.filter(t => t.vId === u).sort((a,b) => a.start - b.start);
+    const ut = trips.filter(t => t.vId === u).sort((a, b) => a.start - b.start);
     html += `<tr><td style="font-weight:600;background:#fff;position:sticky;left:0;z-index:1;border-right:2px solid var(--border-light)">Unit ${String(u+1).padStart(2,'0')}</td>`;
     for (let i = 0; i < maxTrips; i++) {
       if (i < ut.length) {
@@ -758,17 +1281,15 @@ function renderSchedules_Loop(units, trips) {
   document.getElementById('unit-schedules-table').innerHTML = html + '</tbody>';
 }
 
-// ─── Render: Vehicle Schedules (Non-Loop) ────────────────────────────────────
+// ─── Render: Vehicle Schedules (Non-Loop) ─────────────────────────────────────
 function renderSchedules_NonLoop(units, legs) {
-  const maxRTs = Math.max(...Array.from({length:units}, (_,u) =>
+  const maxRTs = Math.max(...Array.from({ length: units }, (_, u) =>
     legs.filter(l => l.vId === u && l.dir === 'AB').length), 1);
 
-  // Row 1: RT N spanning 4 cols each
   let html = '<thead><tr><th rowspan="2" style="background:var(--bg-sec);position:sticky;left:0;z-index:2;min-width:80px">UNIT</th>';
   for (let i = 1; i <= maxRTs; i++) {
     html += `<th colspan="4" style="text-align:center;background:var(--bg-sec)">Round Trip ${i}</th>`;
   }
-  // Row 2: sub-headers per RT
   html += '</tr><tr>';
   for (let i = 0; i < maxRTs; i++) {
     html += `<th><span class="tag tag-ab">A→B</span> Dep</th>`;
@@ -779,7 +1300,7 @@ function renderSchedules_NonLoop(units, legs) {
   html += '</tr></thead><tbody>';
 
   for (let u = 0; u < units; u++) {
-    html += `<tr><td style="font-weight:600;background:#fff;position:sticky;left:0;z-index:1;border-right:2px solid var(--border-light)">Unit ${String(u+1).padStart(2,'0')}</td>`;
+    html += `<tr><td style="font-weight:600;background:#fff;position:sticky;left:0;z-index:1;border-right:2px solid var(--border-light)">Unit ${String(u+1).padStart(2,'00')}</td>`;
     for (let i = 0; i < maxRTs; i++) {
       const ab = legs.find(l => l.vId === u && l.dir === 'AB' && l.rtIdx === i);
       const ba = legs.find(l => l.vId === u && l.dir === 'BA' && l.rtIdx === i);
@@ -803,39 +1324,39 @@ function renderSchedules_NonLoop(units, legs) {
   document.getElementById('unit-schedules-table').innerHTML = html + '</tbody>';
 }
 
-// ─── Render: Dispatch Ledger (Loop) ──────────────────────────────────────────
+// ─── Render: Dispatch Ledger (Loop) ───────────────────────────────────────────
 function renderLedger_Loop(trips, pbs) {
-  const sorted = [...trips].sort((a,b) => a.start - b.start);
+  const sorted = [...trips].sort((a, b) => a.start - b.start);
   let html = '', prev = null;
   sorted.forEach(tr => {
     const p   = pbs.find(pb => pb.idx === tr.periodIdx);
-    const gap = prev === null ? '–' : (tr.start - prev) + ' min';
+    const gap = prev === null ? '–' : Math.round(tr.start - prev) + ' min';
     prev = tr.start;
     html += `<tr>
       <td><strong>${fmtAMPM(tr.start)}</strong></td>
       <td>${gap}</td>
-      <td>Unit ${String(tr.vId+1).padStart(2,'0')}</td>
+      <td>Unit ${String(tr.vId+1).padStart(2,'00')}</td>
       <td><span class="period-badge" style="background:${p.color}"></span>Period ${tr.periodIdx+1}</td>
     </tr>`;
   });
   document.getElementById('dispatch-ledger-body').innerHTML = html;
 }
 
-// ─── Render: Dispatch Ledger (Non-Loop, per terminal) ────────────────────────
+// ─── Render: Dispatch Ledger (Non-Loop) ───────────────────────────────────────
 function renderLedger_NonLoop(legs, pbs, terminal) {
   const dir    = terminal === 'A' ? 'AB' : 'BA';
   const bodyId = terminal === 'A' ? 'dispatch-a-body' : 'dispatch-b-body';
-  const sorted = legs.filter(l => l.dir === dir).sort((a,b) => a.start - b.start);
+  const sorted = legs.filter(l => l.dir === dir).sort((a, b) => a.start - b.start);
 
   let html = '', prev = null;
   sorted.forEach(leg => {
     const p   = pbs.find(pb => pb.idx === leg.periodIdx);
-    const gap = prev === null ? '–' : (leg.start - prev) + ' min';
+    const gap = prev === null ? '–' : Math.round(leg.start - prev) + ' min';
     prev = leg.start;
     html += `<tr>
       <td><strong>${fmtAMPM(leg.start)}</strong></td>
       <td>${gap}</td>
-      <td>Unit ${String(leg.vId+1).padStart(2,'0')}</td>
+      <td>Unit ${String(leg.vId+1).padStart(2,'00')}</td>
       <td>${fmtAMPM(leg.end)}</td>
       <td><span class="period-badge" style="background:${p.color}"></span>Period ${leg.periodIdx+1}</td>
     </tr>`;
