@@ -207,7 +207,7 @@
 
     <div class="period-builder">
       <div class="period-hdr">
-        <span>Operating Periods</span>
+        <span>Service Periods</span>
         <div>
           <button class="btn-sm" onclick="addPeriod()">+ Add</button>
           <button class="btn-sm" onclick="removePeriod()">− Remove</button>
@@ -746,7 +746,7 @@ function renderPeriods() {
             <input type="number" step="0.1" min="0.1" value="${p.ttABHr}" onchange="updateP(${i},'ttAB',this.value)"></div>
           <div class="fld"><label>Travel B→A (hrs)</label>
             <input type="number" step="0.1" min="0.1" value="${p.ttBAHr}" onchange="updateP(${i},'ttBA',this.value)"></div>
-          <div class="fld"><label>Target Hw (min)</label>
+          <div class="fld"><label>Target Headway (min)</label>
             <input type="number" step="1" min="1" value="${p.targetHwMin}" onchange="updateP(${i},'targetHw',this.value)"></div>
         </div>`;
     } else {
@@ -757,7 +757,7 @@ function renderPeriods() {
             <input type="number" step="0.5" min="0.5" value="${p.durationHr}" onchange="updateP(${i},'dur',this.value)"></div>
           <div class="fld"><label>Roundtrip (hrs)</label>
             <input type="number" step="0.1" min="0.1" value="${p.rtHr}" onchange="updateP(${i},'rt',this.value)"></div>
-          <div class="fld"><label>Target Hw (min)</label>
+          <div class="fld"><label>Target Headway (min)</label>
             <input type="number" step="1" min="1" value="${p.targetHwMin}" onchange="updateP(${i},'targetHw',this.value)"></div>
         </div>`;
     }
@@ -939,7 +939,7 @@ function runLoop(units, startMin, pbs, lA, endOp, totalDur, method, capacity) {
     '<th>Period</th><th>Time Window</th><th>Duration</th>' +
     '<th>Roundtrip</th><th>Layover</th><th>Cycle</th>' +
     '<th>Planned Interval</th>' +
-    '<th class="realized-col">Realized Avg Hw</th>' +
+    '<th class="realized-col">Realized Avg Headway</th>' +
     '<th class="fleet-col">Min Fleet<br><small style="font-weight:400">(per target)</small></th>' +
     '<th class="status-col">Service Status</th>';
 
@@ -981,7 +981,7 @@ function runLoop(units, startMin, pbs, lA, endOp, totalDur, method, capacity) {
 
   document.getElementById('summary-note').innerHTML =
     '<strong>Planned Interval</strong> = Cycle ÷ N (formula). ' +
-    '<strong>Realized Avg Hw</strong> = mean gap between consecutive actual departures from simulation output. ' +
+    '<strong>Realized Avg Headway</strong> = mean gap between consecutive actual departures from simulation output. ' +
     'These diverge when cycle times change across periods.';
 
   // Metrics
@@ -1054,7 +1054,7 @@ function runNonLoop(units, startMin, pbs, lA, lB, endOp, totalDur, method, capac
     '<th>Travel A→B</th><th>Travel B→A</th>' +
     '<th>Layover A</th><th>Layover B</th>' +
     '<th>Cycle</th><th>Planned Interval</th>' +
-    '<th class="realized-col">Realized Avg Hw<br><small style="font-weight:400">A / B</small></th>' +
+    '<th class="realized-col">Realized Avg Headway<br><small style="font-weight:400">A / B</small></th>' +
     '<th class="fleet-col">Min Fleet<br><small style="font-weight:400">(per target)</small></th>' +
     '<th class="status-col">Service Status</th>';
 
@@ -1100,7 +1100,7 @@ function runNonLoop(units, startMin, pbs, lA, lB, endOp, totalDur, method, capac
 
   document.getElementById('summary-note').innerHTML =
     '<strong>Planned Interval</strong> = Cycle ÷ N (formula). ' +
-    '<strong>Realized Avg Hw A / B</strong> = mean departure gaps at Terminal A (A→B) and Terminal B (B→A) from simulation output.';
+    '<strong>Realized Avg Headway A / B</strong> = mean departure gaps at Terminal A (A→B) and Terminal B (B→A) from simulation output.';
 
   // Metrics
   const rtCounts = Array(units).fill(0);
